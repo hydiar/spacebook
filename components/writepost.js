@@ -30,6 +30,58 @@ function WritePost({ navigation }) {
 
     let icon_size = windowWidth / 7
 
+    const getKey = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@api_Key')
+            if(value !== null) {
+                return value
+            }
+        } catch(e) {
+            console.log("Error retrieving API Key")
+        }
+    }
+
+    const getID = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@ID')
+            if(value !== null) {
+                return value
+            }
+        } catch(e) {
+            console.log("Error retrieving API Key")
+        }
+    }
+
+    async function SubmitPost() {
+        if (postText != "") {
+            const userID = await getID()
+            const apiKey = await getKey()
+            const url = "http://127.0.0.1:3333/api/1.0.0/user/" + userID + "/post";
+            let result = fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Authorization': apiKey,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                // body :
+                body: JSON.stringify({
+                    text: postText,
+                })
+            })
+                //.then((response) => response.json())
+                .then((response) => response.json())
+                .then((json) => console.log(json))
+
+                .catch((error) => console.log(error));
+
+            await result
+            navigation.navigate('Home')
+        }
+
+
+    }
+
     return (
         <ImageBackground source={require("../assets/stars_darker.png")} style={{width: windowWidth, height: windowHeight}}>
             <View style={{alignItems: 'top'}}>
@@ -115,7 +167,7 @@ function WritePost({ navigation }) {
                     <View>
                         <TouchableOpacity
                             activeOpacity={0.95} style={[styles.button, {width: windowWidth/2.2, margin: 6}]}
-                            onPress={() => Login()}>
+                            onPress={() => SubmitPost()}>
 
                             <Text style={styles.buttonText}>Post</Text>
                         </TouchableOpacity>

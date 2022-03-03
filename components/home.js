@@ -8,7 +8,9 @@ import {
     Dimensions,
     ImageBackground,
     Image,
-    TouchableHighlight, Button,
+    TouchableHighlight,
+    ActivityIndicator,
+    FlatList
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavBar from "./navigationbar";
 import Post from "./post";
 import styles from "../styles"
+import { useEffect, useState } from "react";
 
 function HomeScreen({ navigation }) {
 
@@ -44,6 +47,43 @@ function HomeScreen({ navigation }) {
         }
     }
 
+
+    const [isLoading, setLoading] = useState(true);
+    const [data, setData] = useState([]);
+
+    let apiKey
+
+    const getPosts = async () => {
+        const userID = await getID()
+        apiKey = await getKey()
+        const url = "http://localhost:3333/api/1.0.0/user/" + userID + "/post"
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Authorization': apiKey
+                }
+            });
+            const json = await response.json();
+            setData(json);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getPosts();
+    }, []);
+
+
+    //const posts = ["hello", "here I am"]
+
+    //{posts.map(postText =>  <Post text={postText}/>)}
+
+    //keyExtractor={({ id }, index) => id}
+
     return (
         <ImageBackground source={require("../assets/stars_darker.png")} style={{width: windowWidth, height: windowHeight}}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -53,10 +93,28 @@ function HomeScreen({ navigation }) {
 
                 <ScrollView style={styles.scrollView}>
 
-                    <Post/>
-                    <Post/>
-                    <Post/>
-                    <Post/>
+                    <View>
+                        {isLoading ? <ActivityIndicator/> : (
+                            <FlatList
+                                data={data}
+
+                                keyExtractor={(item) => {
+                                    return item.post_id;
+                                }}
+                                renderItem={({ item }) => (
+                                    <Post
+                                        userID = {item.author.user_id}
+                                        fname = {item.author.first_name}
+                                        lname = {item.author.last_name}
+                                        text = {item.text}
+                                        time = {item.timestamp}
+                                        likes = {item.numLikes}
+
+                                    />
+                                )}
+                            />
+                        )}
+                    </View>
 
                 </ScrollView>
             </View>

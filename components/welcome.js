@@ -42,7 +42,6 @@ function WelcomeScreen({ navigation }) {
     //const [data, setData] = React.useState([]);
 
     let key = ""
-
     let id = ""
 
     const storeKey = async (value) => {
@@ -64,6 +63,7 @@ function WelcomeScreen({ navigation }) {
     async function Login() {
         //const url = "http://192.168.1.53:3333/api/1.0.0/login";
         const url = "http://127.0.0.1:3333/api/1.0.0/login"; //for testing on phone
+        let jsonRaw
         let result = fetch(url, {
             method: 'POST',
             headers: {
@@ -76,11 +76,11 @@ function WelcomeScreen({ navigation }) {
                 password: password,
             })
         })
-            //.then((response) => response.json())
             .then((response) => response.json())
-            .then((json) => key = json['token'])
-            .then((json) => id = json['id'])
-
+            .then((json) => {
+                key = json['token']
+                id = json['id']
+            })
             .catch((error) => console.log(error));
 
         await result

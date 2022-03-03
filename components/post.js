@@ -7,19 +7,57 @@ import {
     TouchableHighlight,
     Dimensions,
     Text,
-    Button
+    Button, ActivityIndicator
 } from "react-native";
 
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 
 import styles from "../styles"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useEffect, useState} from "react";
 
-function Post() {
+function Post(props) {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
 
     const navigation = useNavigation();
+
+    const getKey = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@api_Key')
+            if(value !== null) {
+                return value
+            }
+        } catch(e) {
+            console.log("Error retrieving API Key")
+        }
+    }
+
+    const [isLoading, setLoading] = useState(true);
+    const [profilePic, setProfilePic] = useState([]);
+
+    const getProfilePic = async () => {
+        try {
+            const response = await  fetch("http://localhost:3333/api/1.0.0/user/8/photo", {
+                method: 'GET',
+                headers: {
+                    'X-Authorization': await getKey(),
+                }
+            });
+            const blob = await response.blob();
+            const pic = URL.createObjectURL(blob)
+            setProfilePic(pic);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getProfilePic();
+    }, []);
 
     let icon_size = windowWidth / 7
 
@@ -28,30 +66,52 @@ function Post() {
             <View style={{flexDirection: 'row', alignItems: "flex-start"}}>
                 <TouchableHighlight style={{padding: 15, paddingLeft: 0}} onPress={() => navigation.navigate('Welcome')}>
                     <View>
-                        <Avatar
-                            size={icon_size * 0.85}
-                            rounded
-                            source={{ uri: 'https://randomuser.me/api/portraits/men/99.jpg' }}
-                            title="Search"
-                            containerStyle={{ backgroundColor: 'white'  }}
-                        />
+                        {isLoading ? <ActivityIndicator/> : (
+                            <Avatar
+                                size={icon_size * 0.85}
+                                rounded
+                                source={profilePic}
+                                title="Profile Picture"
+                                containerStyle={{ backgroundColor: 'white'  }}
+                            />
+                        )}
                     </View>
                 </TouchableHighlight>
 
                 <View>
-                    <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>Harold Parold</Text>
+                    <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>
+                        {props.fname + " " + props.lname}
+                    </Text>
                     <Text style={{color: "white", fontSize: 12}}>3 days ago...</Text>
                 </View>
             </View>
 
             <Text style={{color: "white", fontSize: 20}}>
-                Hello everyone, my name is Harold Parold and this is my first post on Spacebook.
-                I hope to become an astronaut one day, as my mother always told me to shoot for
-                the stars. Please add me as your friend if you can, and I will review your application
-                and get back to you as soon as possible. Thanks ;), Hazza P.
+                {props.text}
             </Text>
 
-            <View style={{flexDirection: 'row', alignItems: "flex-start", padding: 6}}>
+
+            <View style={{flexDirection: 'row'}}>
+
+                <TouchableHighlight style={{paddingTop: 3}} onPress={() => navigation.navigate('Welcome')}>
+                    <View style={{flexDirection: 'row'}}>
+                        <Image source={require('../assets/like_button.png')}
+                               style={{width: icon_size/3, height: icon_size/3}}/>
+                        <Text style={{padding: icon_size/12, color: "white", fontSize: 11}}>{props.likes}</Text>
+                    </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight style={{position: 'absolute', right: 10}} onPress={() => navigation.navigate('Welcome')}>
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={{padding: icon_size/15, color: "white", fontSize: 11}}>3</Text>
+                        <Image source={require('../assets/comment_button.png')}
+                               style={{width: icon_size/3, height: icon_size/3}}/>
+                    </View>
+                </TouchableHighlight>
+            </View>
+
+
+            <View style={{flexDirection: 'row', alignItems: "flex-start", paddingBottom: 6}}>
                 <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
                     <View style={{flexDirection: 'row'}}>
                         <Image source={require('../assets/like_button.png')}
