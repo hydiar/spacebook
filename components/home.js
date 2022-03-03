@@ -19,6 +19,7 @@ import NavBar from "./navigationbar";
 import Post from "./post";
 import styles from "../styles"
 import { useEffect, useState } from "react";
+import post from "./post";
 
 function HomeScreen({ navigation }) {
 
@@ -47,25 +48,49 @@ function HomeScreen({ navigation }) {
         }
     }
 
-
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
-    let apiKey
-
-    const getPosts = async () => {
+    const getAllPosts = async () => {
         const userID = await getID()
-        apiKey = await getKey()
-        const url = "http://localhost:3333/api/1.0.0/user/" + userID + "/post"
+        let apiKey = await getKey()
+        const friendUrl = "http://localhost:3333/api/1.0.0/user/" + userID + "/friends"
         try {
-            const response = await fetch(url, {
+            const response = await fetch(friendUrl, {
                 method: 'GET',
                 headers: {
                     'X-Authorization': apiKey
                 }
             });
-            const json = await response.json();
-            setData(json);
+            const jsonFriends = await response.json();
+            let postArray = []
+            for (let i = 0; i < jsonFriends.length; i++) {
+
+                const urlPosts = "http://localhost:3333/api/1.0.0/user/" + jsonFriends[i].user_id + "/post"
+                try {
+                    const response = await fetch(urlPosts, {
+                        method: 'GET',
+                        headers: {
+                            'X-Authorization': apiKey
+                        }
+                    });
+                    const jsonPosts = await response.json();
+                    for (let i = 0; i < jsonPosts.length; i++) {
+                        postArray.push(jsonPosts[i]);
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    setLoading(false);
+                }
+
+            }
+            postArray.sort((a, b) => {
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            })
+            setData(postArray)
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -74,7 +99,7 @@ function HomeScreen({ navigation }) {
     }
 
     useEffect(() => {
-        getPosts();
+        getAllPosts();
     }, []);
 
 
@@ -97,6 +122,7 @@ function HomeScreen({ navigation }) {
                         {isLoading ? <ActivityIndicator/> : (
                             <FlatList
                                 data={data}
+                                //allPosts={allPosts}
 
                                 keyExtractor={(item) => {
                                     return item.post_id;

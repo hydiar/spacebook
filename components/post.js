@@ -59,6 +59,11 @@ function Post(props) {
         getProfilePic();
     }, []);
 
+    const formatDate = (dateString) => {
+        const options = { hour: "numeric", minute: "numeric", year: "numeric", month: "long", day: "numeric" }
+        return new Date(dateString).toLocaleDateString(undefined, options)
+    }
+
     let icon_size = windowWidth / 7
 
     return (
@@ -82,7 +87,7 @@ function Post(props) {
                     <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>
                         {props.fname + " " + props.lname}
                     </Text>
-                    <Text style={{color: "white", fontSize: 12}}>3 days ago...</Text>
+                    <Text style={{color: "white", fontSize: 12}}>{formatDate(props.time)}</Text>
                 </View>
             </View>
 
