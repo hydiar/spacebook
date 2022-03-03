@@ -13,6 +13,8 @@ import {
     Linking,
     Dimensions } from "react-native";
 
+import { storeKey, storeID } from "./asyncstore"
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -42,22 +44,6 @@ function WelcomeScreen({ navigation }) {
 
     let key = ""
     let id = ""
-
-    const storeKey = async (value) => {
-        try {
-            await AsyncStorage.setItem('@api_Key', value)
-        } catch (e) {
-            console.log("Error storing API Key")
-        }
-    }
-
-    const storeID = async (value) => {
-        try {
-            await AsyncStorage.setItem('@ID', value)
-        } catch (e) {
-            console.log("Error storing ID")
-        }
-    }
 
     async function Register() {
         if (password == passwordConfirm ) {

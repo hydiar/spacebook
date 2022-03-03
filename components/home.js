@@ -13,40 +13,17 @@ import {
     FlatList
 } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getKey, getID } from "./asyncstore"
 
 import NavBar from "./navigationbar";
 import Post from "./post";
 import styles from "../styles"
 import { useEffect, useState } from "react";
-import post from "./post";
 
 function HomeScreen({ navigation }) {
 
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
-
-    const getKey = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@api_Key')
-            if(value !== null) {
-                return value
-            }
-        } catch(e) {
-            console.log("Error retrieving API Key")
-        }
-    }
-
-    const getID = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@ID')
-            if(value !== null) {
-                return value
-            }
-        } catch(e) {
-            console.log("Error retrieving API Key")
-        }
-    }
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -122,7 +99,6 @@ function HomeScreen({ navigation }) {
                         {isLoading ? <ActivityIndicator/> : (
                             <FlatList
                                 data={data}
-                                //allPosts={allPosts}
 
                                 keyExtractor={(item) => {
                                     return item.post_id;

@@ -12,6 +12,7 @@ import WelcomeScreen from './components/welcome'
 import NavBar from './components/navigationbar'
 import Register from './components/register'
 import WritePost from './components/writepost'
+import Friends from './components/friends'
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ function App() {
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="Write Post" component={WritePost} />
+                <Stack.Screen name="Friends" component={Friends} />
             </Stack.Navigator>
         </NavigationContainer>
     );

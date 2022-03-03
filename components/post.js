@@ -10,9 +10,12 @@ import {
     Button, ActivityIndicator
 } from "react-native";
 
+import { getKey, getID } from "./asyncstore"
+
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 
+import {getProfilePic} from "./functions";
 import styles from "../styles"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useEffect, useState} from "react";
@@ -23,23 +26,12 @@ function Post(props) {
 
     const navigation = useNavigation();
 
-    const getKey = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@api_Key')
-            if(value !== null) {
-                return value
-            }
-        } catch(e) {
-            console.log("Error retrieving API Key")
-        }
-    }
-
     const [isLoading, setLoading] = useState(true);
     const [profilePic, setProfilePic] = useState([]);
 
     const getProfilePic = async () => {
         try {
-            const response = await  fetch("http://localhost:3333/api/1.0.0/user/8/photo", {
+            const response = await  fetch("http://localhost:3333/api/1.0.0/user/" + props.userID + "/photo", {
                 method: 'GET',
                 headers: {
                     'X-Authorization': await getKey(),

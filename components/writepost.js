@@ -127,32 +127,6 @@ function WritePost({ navigation }) {
 
                 </ScrollView>
 
-                <View style={{flexDirection: 'row', alignItems: "flex-start", padding: 6}}>
-                    <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
-                        <View style={{flexDirection: 'row'}}>
-                            <Image source={require('../assets/like_button.png')}
-                                   style={{width: icon_size/2, height: icon_size/2}}/>
-                            <Text style={{padding: icon_size/8, color: "white", fontSize: 14}}>Like</Text>
-                        </View>
-                    </TouchableHighlight>
-
-                    <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
-                        <View style={{flexDirection: 'row'}}>
-                            <Image source={require('../assets/comment_button.png')}
-                                   style={{width: icon_size/2, height: icon_size/2}}/>
-                            <Text style={{padding: icon_size/8, color: "white", fontSize: 14}}>Comment</Text>
-                        </View>
-                    </TouchableHighlight>
-
-                    <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
-                        <View style={{flexDirection: 'row'}}>
-                            <Image source={require('../assets/share_button.png')}
-                                   style={{width: icon_size/2, height: icon_size/2}}/>
-                            <Text style={{padding: icon_size/8, color: "white", fontSize: 14}}>Share</Text>
-                        </View>
-                    </TouchableHighlight>
-                </View>
-
                 <View style={{flexDirection: 'row'}}>
                     <View>
                         <TouchableOpacity

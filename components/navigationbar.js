@@ -5,14 +5,11 @@ import {
     View,
     Image,
     TouchableHighlight,
-    TouchableOpacity,
-    Dimensions, Text, Button
+    Dimensions
 } from "react-native";
 
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
-
-import Home from "../components/home"
 
 import styles from "../styles"
 
@@ -56,7 +53,7 @@ function NavBar() {
                                style={{width: icon_size, height: icon_size}}/>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Friends')}>
                     <Image source={require('../assets/friends.png')}
                            style={{width: icon_size, height: icon_size}}/>
                 </TouchableHighlight>
