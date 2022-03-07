@@ -13,7 +13,7 @@ import {
     FlatList
 } from 'react-native';
 
-import { getKey, getID } from "./asyncstore"
+import { getKey, getID } from "../scripts/asyncstore"
 
 import NavBar from "./navigationbar";
 import Post from "./post";
@@ -93,7 +93,7 @@ function HomeScreen({ navigation }) {
                     <NavBar />
                 </View>
 
-                <ScrollView style={styles.scrollView}>
+                <ScrollView>
 
                     <View>
                         {isLoading ? <ActivityIndicator/> : (

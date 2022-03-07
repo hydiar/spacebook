@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import NavBar from "./navigationbar";
 import {ProfileElement} from "./profileelement";
 
-function Friends() {
+function Search() {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
 
@@ -32,15 +32,17 @@ function Friends() {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
-    const getFriends = async () => {
+
+    const getUsers = async () => { //also get existing friends, make it so you can't add your friends again (different buttons)
         const userID = await getID()
         let apiKey = await getKey()
-        const friendUrl = "http://localhost:3333/api/1.0.0/user/" + userID + "/friends"
+        const friendUrl = "http://localhost:3333/api/1.0.0/search" //add query stuff to url - e.g. ?q=Ash%20Williams&limit=20&offset=0
         try {
             const response = await fetch(friendUrl, {
                 method: 'GET',
                 headers: {
-                    'X-Authorization': apiKey
+                    'X-Authorization': apiKey,
+                    'accept': 'application/json'
                 }
             });
             const json = await response.json();
@@ -53,7 +55,7 @@ function Friends() {
     }
 
     useEffect(() => {
-        getFriends();
+        getUsers();
     }, []);
 
     return (
@@ -67,7 +69,7 @@ function Friends() {
 
                     <View>
                         <Text style={{color: "white", fontSize: 24, paddingLeft: 27, paddingTop: 25}}>
-                            Your Friends
+                            Spacebook Users (make this a search input box)
                         </Text>
                     </View>
 
@@ -97,4 +99,4 @@ function Friends() {
 
     );
 }
-export default Friends;
+export default Search;

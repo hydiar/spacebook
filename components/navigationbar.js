@@ -5,13 +5,16 @@ import {
     View,
     Image,
     TouchableHighlight,
-    Dimensions
+    Dimensions, ActivityIndicator
 } from "react-native";
 
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 
 import styles from "../styles"
+import {ProfilePic, ProfileElement} from "./profileelement";
+import {getID, getKey} from "../scripts/asyncstore";
+import {useEffect, useState} from "react";
 
 function NavBar() {
     const windowWidth = Dimensions.get('window').width;
@@ -23,6 +26,33 @@ function NavBar() {
 
     let logo_size = (windowWidth / 2) -10
 
+    const [isLoading, setLoading] = useState(true);
+    const [profilePic, setProfilePic] = useState(true);
+
+    const getUserProfilePic = async () => {
+        try {
+            const userID = await getID()
+            const response = await fetch("http://localhost:3333/api/1.0.0/user/" + userID + "/photo", {
+                method: 'GET',
+                headers: {
+                    'X-Authorization': await getKey(),
+                }
+            });
+            const blob = await response.blob();
+            const pic = URL.createObjectURL(blob)
+            setProfilePic(pic);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getUserProfilePic();
+    }, []);
+
+
     return (
         <View>
             <View style={[styles.navBox, {borderBottomWidth: 0, paddingTop: 10}]}>
@@ -31,7 +61,7 @@ function NavBar() {
                        style={{marginLeft: 10, marginBottom: 2, width: logo_size, height: logo_size/4}}/>
 
 
-                <TouchableHighlight style={{marginLeft: (windowWidth / 2)-icon_size}} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={{marginLeft: (windowWidth / 2)-icon_size}} onPress={() => navigation.navigate('Search')}>
                     <View>
                         <Avatar
                             size={icon_size * 0.65}
@@ -48,7 +78,7 @@ function NavBar() {
 
             <View style={styles.navBox}>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Home')}>
                         <Image source={require('../assets/home_purple.png')}
                                style={{width: icon_size, height: icon_size}}/>
                 </TouchableHighlight>
@@ -64,7 +94,7 @@ function NavBar() {
                             size={icon_size}
                             rounded
                             source={require('../assets/notification.png')}
-                            title="View Your Profile"
+                            title="Notifications"
                             containerStyle={{ backgroundColor: 'black' }}
                         />
                     </View>
@@ -72,17 +102,19 @@ function NavBar() {
 
                 <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
                     <View>
-                        <Avatar
-                            size={icon_size * 0.75}
-                            rounded
-                            source={{ uri: 'https://randomuser.me/api/portraits/men/3.jpg' }}
-                            title="View Your Profile"
-                            containerStyle={{ backgroundColor: 'grey' }}
-                        />
+                        {isLoading ? <ActivityIndicator/> : (
+                            <Avatar
+                                size={icon_size * 0.85}
+                                rounded
+                                source={profilePic}
+                                title="Profile Picture"
+                                containerStyle={{ backgroundColor: 'white'  }}
+                            />
+                        )}
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Settings')}>
                     <Image source={require('../assets/burger_purple.png')}
                            style={{width: icon_size, height: icon_size}}/>
                 </TouchableHighlight>

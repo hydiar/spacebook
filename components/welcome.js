@@ -13,7 +13,7 @@ import {
     Linking,
     Dimensions } from "react-native";
 
-import { storeKey, storeID } from "./asyncstore"
+import { storeKey, storeID } from "../scripts/asyncstore"
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

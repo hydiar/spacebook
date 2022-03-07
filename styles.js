@@ -23,7 +23,15 @@ export default StyleSheet.create({
         width: windowWidth * 0.75,
         margin: 11,
         borderWidth: 1,
-        //padding: 10,
+    },
+    edit: {
+        color: "white",
+        placeholderTextColor: "#bbb",
+        borderColor: "transparent",
+        borderBottomColor: "#aaa",
+        height: windowHeight / 22,
+        width: windowWidth * 0.5,
+        borderWidth: 1
     },
     inputBox: {
         color: "white",
@@ -65,5 +73,9 @@ export default StyleSheet.create({
     buttonText: {
         color: "#fff",
         fontSize: windowWidth / 25
+    },
+    editButtonText: {
+        color: "#fff",
+        fontSize: windowWidth / 30
     }
 });

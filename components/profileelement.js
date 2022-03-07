@@ -1,12 +1,13 @@
-import {getKey} from "./asyncstore";
+import {getKey} from "../scripts/asyncstore";
 import {useEffect, useState} from "react";
 import { useNavigation } from '@react-navigation/native';
 import {ActivityIndicator, Dimensions, Text, TouchableHighlight, View} from "react-native";
 import {Avatar} from "react-native-elements";
 import * as React from "react";
 
-export function ProfileElement(props) {
+export function ProfilePic(props) {
     const windowWidth = Dimensions.get('window').width;
+    const icon_size = windowWidth / 7
 
     const navigation = useNavigation();
 
@@ -15,6 +16,7 @@ export function ProfileElement(props) {
 
     const getProfilePic = async () => {
         try {
+            //console.log(props.userID)
             const response = await fetch("http://localhost:3333/api/1.0.0/user/" + props.userID + "/photo", {
                 method: 'GET',
                 headers: {
@@ -35,6 +37,29 @@ export function ProfileElement(props) {
         getProfilePic();
     }, []);
 
+    return(
+        <TouchableHighlight style={{padding: 15, paddingLeft: 0}} onPress={() => navigation.navigate('Welcome')}>
+            <View>
+                {isLoading ? <ActivityIndicator/> : (
+                    <Avatar
+                        size={icon_size * 0.85}
+                        rounded
+                        source={profilePic}
+                        title="Profile Picture"
+                        containerStyle={{ backgroundColor: 'white'  }}
+                    />
+                )}
+            </View>
+        </TouchableHighlight>
+    )
+}
+
+export function ProfileElement(props) {
+    const windowWidth = Dimensions.get('window').width;
+    const icon_size = windowWidth / 7
+
+    const navigation = useNavigation();
+
     let description = "";
 
     const formatDate = (dateString) => {
@@ -49,24 +74,12 @@ export function ProfileElement(props) {
         description = props.desc
     }
 
-
-    let icon_size = windowWidth / 7
-
     return (
         <View style={{flexDirection: 'row', alignItems: "flex-start"}}>
-            <TouchableHighlight style={{padding: 15, paddingLeft: 0}} onPress={() => navigation.navigate('Welcome')}>
-                <View>
-                    {isLoading ? <ActivityIndicator/> : (
-                        <Avatar
-                            size={icon_size * 0.85}
-                            rounded
-                            source={profilePic}
-                            title="Profile Picture"
-                            containerStyle={{ backgroundColor: 'white'  }}
-                        />
-                    )}
-                </View>
-            </TouchableHighlight>
+
+            <ProfilePic
+                userID = {props.userID}
+            />
 
             <View>
                 <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>
