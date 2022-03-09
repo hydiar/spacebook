@@ -44,7 +44,6 @@ function WelcomeScreen({ navigation }) {
     let id = ""
 
     async function Login() {
-        //const url = "http://192.168.1.53:3333/api/1.0.0/login";
         const url = "http://127.0.0.1:3333/api/1.0.0/login"; //for testing on phone
         let jsonRaw
         let result = fetch(url, {

@@ -20,6 +20,7 @@ import { getKey, getID } from "../scripts/asyncstore"
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from "react";
 
+import styles from "../styles"
 import NavBar from "./navigationbar";
 import {ProfileElement} from "./profileelement";
 

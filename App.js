@@ -11,6 +11,7 @@ import WritePost from './components/writepost';
 import Friends from './components/friends';
 import Settings from './components/settings';
 import Search from "./components/search";
+import Notifications from "./components/notifications";
 
 function App() {
 
@@ -24,9 +25,9 @@ function App() {
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="Write Post" component={WritePost} />
                 <Stack.Screen name="Friends" component={Friends} />
+                <Stack.Screen name="Notifications" component={Notifications} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="Search" component={Search} />
-
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -29,6 +29,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
+//TODO fix register so that it properly logs the user in once registered
+
 function WelcomeScreen({ navigation }) {
     let logo_size = windowWidth / 2
 

@@ -70,6 +70,23 @@ export default StyleSheet.create({
         borderBottomWidth: 1,
         width: windowWidth
     },
+    addButton: {
+        height: windowWidth * 1 / 10,
+        width: windowWidth * 1 / 8,
+        backgroundColor: '#791AD9',
+        text: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5
+    },
+    friendButton: {
+        height: windowWidth * 1 / 10,
+        width: windowWidth * 1 / 10,
+        backgroundColor: '#791AD9',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5
+    },
     buttonText: {
         color: "#fff",
         fontSize: windowWidth / 25

@@ -88,7 +88,7 @@ function NavBar() {
                            style={{width: icon_size, height: icon_size}}/>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Notifications')}>
                     <View>
                         <Avatar
                             size={icon_size}

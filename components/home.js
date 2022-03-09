@@ -80,12 +80,6 @@ function HomeScreen({ navigation }) {
     }, []);
 
 
-    //const posts = ["hello", "here I am"]
-
-    //{posts.map(postText =>  <Post text={postText}/>)}
-
-    //keyExtractor={({ id }, index) => id}
-
     return (
         <ImageBackground source={require("../assets/stars_darker.png")} style={{width: windowWidth, height: windowHeight}}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -105,6 +99,7 @@ function HomeScreen({ navigation }) {
                                 }}
                                 renderItem={({ item }) => (
                                     <Post
+                                        postID = {item.post_id}
                                         userID = {item.author.user_id}
                                         fname = {item.author.first_name}
                                         lname = {item.author.last_name}
