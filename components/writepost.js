@@ -51,7 +51,7 @@ function WritePost({ navigation }) {
             console.log("Error retrieving API Key")
         }
     }
-
+    //TODO add error handling
     async function SubmitPost() {
         if (postText != "") {
             const userID = await getID()

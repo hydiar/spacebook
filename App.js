@@ -12,6 +12,7 @@ import Friends from './components/friends';
 import Settings from './components/settings';
 import Search from "./components/search";
 import Notifications from "./components/notifications";
+import Profile from "./components/profile";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
                 <Stack.Screen name="Notifications" component={Notifications} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="Search" component={Search} />
+                <Stack.Screen name="Profile" component={Profile} />
             </Stack.Navigator>
         </NavigationContainer>
     );

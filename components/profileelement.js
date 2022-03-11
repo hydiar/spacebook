@@ -5,54 +5,8 @@ import {ActivityIndicator, Dimensions, Text, TouchableHighlight, View} from "rea
 import {Avatar} from "react-native-elements";
 import * as React from "react";
 
-export function ProfilePic(props) {
-    const windowWidth = Dimensions.get('window').width;
-    const icon_size = windowWidth / 7
+import ProfilePic from "./profilepic";
 
-    const navigation = useNavigation();
-
-    const [isLoading, setLoading] = useState(true);
-    const [profilePic, setProfilePic] = useState([]);
-
-    const getProfilePic = async () => {
-        try {
-            //console.log(props.userID)
-            const response = await fetch("http://localhost:3333/api/1.0.0/user/" + props.userID + "/photo", {
-                method: 'GET',
-                headers: {
-                    'X-Authorization': await getKey(),
-                }
-            });
-            const blob = await response.blob();
-            const pic = URL.createObjectURL(blob)
-            setProfilePic(pic);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        getProfilePic();
-    }, []);
-
-    return(
-        <TouchableHighlight style={{padding: 15, paddingLeft: 0}} onPress={() => navigation.navigate('Welcome')}>
-            <View>
-                {isLoading ? <ActivityIndicator/> : (
-                    <Avatar
-                        size={icon_size * 0.85}
-                        rounded
-                        source={profilePic}
-                        title="Profile Picture"
-                        containerStyle={{ backgroundColor: 'white'  }}
-                    />
-                )}
-            </View>
-        </TouchableHighlight>
-    )
-}
 
 export function ProfileElement(props) {
     const windowWidth = Dimensions.get('window').width;

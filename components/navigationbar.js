@@ -100,7 +100,7 @@ function NavBar() {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Home')}>
                     <View>
                         {isLoading ? <ActivityIndicator/> : (
                             <Avatar

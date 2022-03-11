@@ -20,6 +20,7 @@ import styles from "../styles"
 import { useEffect, useState } from "react";
 import {useNavigation} from "@react-navigation/native";
 
+
 export function UpdateDetail(props) {
     const windowWidth = Dimensions.get('window').width;
     const [inputText, setInputText] = useState("");
@@ -76,7 +77,7 @@ export function UpdateDetail(props) {
         <View style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 7}}>
             <TextInput
                 style={styles.edit}
-                placeholder={props.textField}
+                placeholder={props.textFIield}
                 secureTextEntry={props.isPassword}
                 onChangeText={(inputText) => setInputText(inputText)}
             />

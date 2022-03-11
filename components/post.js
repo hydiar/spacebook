@@ -7,7 +7,8 @@ import {
     TouchableHighlight,
     Dimensions,
     Text,
-    Button, ActivityIndicator
+    Button,
+    ActivityIndicator
 } from "react-native";
 
 import { getKey, getID } from "../scripts/asyncstore"
@@ -23,16 +24,15 @@ import {useEffect, useState} from "react";
 
 function Post(props) {
     const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
 
     const navigation = useNavigation();
 
     let icon_size = windowWidth / 7
 
-    const [numLikes, setNumLikes] = useState(true);
+    const [likeNum, setLikeNum] = useState(true);
     const [liked, setLiked] = useState(true);
 
-    async function LikePost(userID, postID) {
+    async function LikeAction(userID, postID) {
         const apiKey = await getKey()
         const url = "http://127.0.0.1:3333/api/1.0.0/user/" + userID + "/post/" + postID + "/like";
 
@@ -46,9 +46,28 @@ function Post(props) {
             })
             if (await response.ok) {
                 console.log("Post " + postID + " successfully liked")
+                setLikeNum(likeNum+1)
             }
             else {
-                console.log("Liking post " + postID + " unsuccessful")
+                try {
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-Authorization': apiKey,
+                            'Accept': '*/*'
+                        }
+                    })
+                    if (await response.ok) {
+                        console.log("Post " + postID + " like successfully removed")
+                        setLikeNum(likeNum-1)
+                    }
+                    else {
+                        console.log("Removing post " + postID + " like unsuccessful")
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                }
             }
 
         } catch (error) {
@@ -68,12 +87,16 @@ function Post(props) {
                 }
             });
             const jsonPost = await response.json();
-            setNumLikes(jsonPost.numLikes)
+            setLikeNum(jsonPost.numLikes)
 
         } catch (error) {
             console.error(error);
         }
     }
+
+    useEffect(() => {
+        GetNumLikes(props.userID, props.postID);
+    }, []);
 
     return (
         <View style={{marginLeft: 15, marginRight: 10}}>
@@ -93,7 +116,7 @@ function Post(props) {
                     <View style={{flexDirection: 'row'}}>
                         <Image source={require('../assets/like_button.png')}
                                style={{width: icon_size/3, height: icon_size/3}}/>
-                        <Text style={{padding: icon_size/12, color: "white", fontSize: 11}}>{props.likes}</Text>
+                        <Text style={{padding: icon_size/12, color: "white", fontSize: 11}}>{likeNum}</Text>
                     </View>
                 </TouchableHighlight>
 
@@ -107,7 +130,7 @@ function Post(props) {
             </View>
 
             <View style={{flexDirection: 'row', alignItems: "flex-start", paddingBottom: 6}}>
-                <TouchableHighlight style={styles.navButton} onPress={() => LikePost(props.userID, props.postID)}>
+                <TouchableHighlight style={styles.navButton} onPress={() => LikeAction(props.userID, props.postID)}>
                     <View style={{flexDirection: 'row'}}>
                         <Image source={require('../assets/like_button.png')}
                                style={{width: icon_size/2, height: icon_size/2}}/>
