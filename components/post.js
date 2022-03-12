@@ -8,7 +8,7 @@ import {
     Dimensions,
     Text,
     Button,
-    ActivityIndicator
+    ActivityIndicator, TouchableOpacity
 } from "react-native";
 
 import { getKey, getID } from "../scripts/asyncstore"
@@ -21,6 +21,8 @@ import styles from "../styles"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useEffect, useState} from "react";
 
+//TODO allow users to click on a post and it take them to a view of just that post
+
 
 function Post(props) {
     const windowWidth = Dimensions.get('window').width;
@@ -30,7 +32,8 @@ function Post(props) {
     let icon_size = windowWidth / 7
 
     const [likeNum, setLikeNum] = useState(true);
-    const [liked, setLiked] = useState(true);
+
+    const [isEditable, setIsEditable] = useState(false);
 
     async function LikeAction(userID, postID) {
         const apiKey = await getKey()
@@ -96,17 +99,38 @@ function Post(props) {
 
     useEffect(() => {
         GetNumLikes(props.userID, props.postID);
+        if (props.iseditable == "true") {
+            setIsEditable(true)
+        }
+
     }, []);
 
     return (
         <View style={{marginLeft: 15, marginRight: 10}}>
-            <ProfileElement
-                userID = {props.userID}
-                time = {props.time}
-                name = {props.fname + " " + props.lname}
-            />
+            <View style={{flexDirection: 'row'}}>
+                <ProfileElement
+                    userID = {props.userID}
+                    time = {props.time}
+                    name = {props.fname + " " + props.lname}
+                />
+                <View style={{paddingTop: icon_size/6}}>
+                    {isEditable ?
+                        <TouchableOpacity
+                            activeOpacity={0.95}
+                            style={[styles.button, {width: icon_size/2, height: icon_size/2}]}
+                            onPress={() => navigation.navigate('Settings')}>
+                            <Image source={require('../assets/edit.png')}
+                                   style={{width: icon_size/3, height: icon_size/3}}/>
+                        </TouchableOpacity>
+                        : <View/>
+                    }
+                </View>
 
-            <Text style={{color: "white", fontSize: 20}}>
+
+
+            </View>
+
+            <Text style={{color: "white", fontSize: 20, width: windowWidth*0.9}}>
                 {props.text}
             </Text>
 

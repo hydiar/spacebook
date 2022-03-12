@@ -100,7 +100,7 @@ function NavBar() {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Home')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('My Profile')}>
                     <View>
                         {isLoading ? <ActivityIndicator/> : (
                             <Avatar
@@ -108,7 +108,7 @@ function NavBar() {
                                 rounded
                                 source={profilePic}
                                 title="Profile Picture"
-                                containerStyle={{ backgroundColor: 'white'  }}
+                                containerStyle={{ backgroundColor: '#1c1c1c' }}
                             />
                         )}
                     </View>

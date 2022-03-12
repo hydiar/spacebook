@@ -31,9 +31,11 @@ export function ProfileElement(props) {
     return (
         <View style={{flexDirection: 'row', alignItems: "flex-start"}}>
 
-            <ProfilePic
-                userID = {props.userID}
-            />
+            <View style={{padding: 15, paddingLeft: 0}}>
+                <ProfilePic
+                    userID = {props.userID}
+                />
+            </View>
 
             <View>
                 <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>

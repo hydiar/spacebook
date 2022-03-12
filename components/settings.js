@@ -15,22 +15,19 @@ import {
 import {getKey, getID, storeKey, storeID} from "../scripts/asyncstore"
 
 import NavBar from "./navigationbar";
-import Post from "./post";
+
 import styles from "../styles"
 import { useEffect, useState } from "react";
 import {useNavigation} from "@react-navigation/native";
-
+import * as ImagePicker from 'expo-image-picker';
 
 export function UpdateDetail(props) {
     const windowWidth = Dimensions.get('window').width;
     const [inputText, setInputText] = useState("");
 
-    const [data, setData] = useState([]);
-
     async function UpdateProfile() {
         const userID = await getID()
         const apiKey = await getKey()
-        let responseToUpdate = "";
         const url = "http://127.0.0.1:3333/api/1.0.0/user/" + userID;
 
         let jsonBody;
@@ -77,7 +74,7 @@ export function UpdateDetail(props) {
         <View style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 7}}>
             <TextInput
                 style={styles.edit}
-                placeholder={props.textFIield}
+                placeholder={props.textField}
                 secureTextEntry={props.isPassword}
                 onChangeText={(inputText) => setInputText(inputText)}
             />
@@ -102,6 +99,22 @@ function Settings() {
 
     const navigation = useNavigation();
 
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            //setImage(result);
+            await UploadProfilePicture(result)
+        }
+
+    }
+
     const getUserData = async () => {
         const userID = await getID()
         const apiKey = await getKey()
@@ -125,6 +138,33 @@ function Settings() {
     useEffect(() => {
         getUserData();
     }, []);
+
+    async function UploadProfilePicture(image) {
+        const apiKey = await getKey();
+        const userID = await getID();
+
+        const res = await fetch(image.uri);
+        let blob = await res.blob();
+        console.log(blob)
+
+        const url = "http://127.0.0.1:3333/api/1.0.0/user/" + userID + "/photo";
+        let result = fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Authorization': apiKey
+            },
+            body: blob
+        })
+            .catch((error) => console.log(error));
+        await result
+
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'Settings'}]
+        })
+        navigation.navigate('Settings')
+    }
+
 
     async function Logout() {
         const apiKey = await getKey();
@@ -198,16 +238,26 @@ function Settings() {
                         )}
                     </View>
 
-                    <View style={{alignItems: 'center', padding: 5}}>
+                    <View style={{alignItems: 'center'}}>
+
                         <TouchableOpacity
                             activeOpacity={0.95}
-                            style={[styles.button, {width: windowWidth*0.5}]}
-                            onPress={() => Logout()}>
-                                <Text style={styles.buttonText}>Logout</Text>
+                            style={[styles.button, {backgroundColor: '#E03E69', width: windowWidth*0.6, height: windowWidth*0.12}]}
+                            onPress={() => pickImage()}>
+                            <Text style={styles.buttonText}>Upload New Profile Picture</Text>
                         </TouchableOpacity>
                     </View>
 
                 </ScrollView>
+
+                <View style={{position: 'absolute', top: windowHeight-(windowHeight/10), left: windowWidth/5}}>
+                    <TouchableOpacity
+                        activeOpacity={0.95}
+                        style={[styles.button, {width: windowWidth*0.5}]}
+                        onPress={() => Logout()}>
+                        <Text style={styles.buttonText}>Logout</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </ImageBackground>
     );

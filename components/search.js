@@ -40,7 +40,8 @@ function Search() {
     const [data, setData] = useState([]);
 
     const getUsers = async (searchTerms) => { //also get existing friends, make it so you can't add your friends again (different buttons)
-        const userID = await getID()
+
+        const controller = new AbortController();
         let apiKey = await getKey()
 
         let searchQuery = "";
@@ -65,6 +66,7 @@ function Search() {
         } finally {
             setLoading(false);
         }
+        controller.abort();
     }
 
     useEffect(() => {
@@ -124,7 +126,7 @@ function Search() {
                 </View>
 
                 <View style={{alignItems: 'center'}}>
-                    <TextInput
+                    <TextInput //TODO update to use SearchBar element https://reactnativeelements.com/docs/searchbar
                         style={[styles.input, {width: windowWidth*0.85}]}
                         placeholder={"Search ..."}
                         onChangeText={(searchTerms) => {

@@ -45,7 +45,7 @@ function ProfilePic(props) {
     }
 
     return(
-        <TouchableHighlight style={{padding: 15, paddingLeft: 0}}
+        <TouchableHighlight
                             onPress={() => {
                                 navigation.navigate('Profile', {
                                     userID: props.userID
@@ -59,7 +59,7 @@ function ProfilePic(props) {
                         rounded
                         source={profilePic}
                         title="Profile Picture"
-                        containerStyle={{ backgroundColor: 'white'  }}
+                        containerStyle={{ backgroundColor: '#1c1c1c' }}
                     />
                 )}
             </View>
