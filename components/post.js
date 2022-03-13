@@ -7,8 +7,8 @@ import {
     TouchableHighlight,
     Dimensions,
     Text,
-    Button,
-    ActivityIndicator, TouchableOpacity
+    Share,
+    TouchableOpacity
 } from "react-native";
 
 import { getKey, getID } from "../scripts/asyncstore"
@@ -96,7 +96,6 @@ function Post(props) {
             console.error(error);
         }
     }
-
     useEffect(() => {
         GetNumLikes(props.userID, props.postID);
         if (props.iseditable == "true") {
@@ -104,6 +103,22 @@ function Post(props) {
         }
 
     }, []);
+
+    const sharePost = async (postText) => {
+        try {
+            const result = await Share.share({
+                message:
+                    props.text
+            });
+            if (result.action === Share.sharedAction) {
+                console.log("Shared")
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
     return (
         <View style={{marginLeft: 15, marginRight: 10}}>
@@ -125,12 +140,15 @@ function Post(props) {
                         : <View/>
                     }
                 </View>
-
-
-
             </View>
 
-            <Text style={{color: "white", fontSize: 20, width: windowWidth*0.9}}>
+
+            <Text style={{color: "white", fontSize: 20, width: windowWidth*0.9}}
+                  onPress={() => navigation.navigate('Post', {
+                      postID: props.postID,
+                      postUserID: props.userID
+                  })}
+            >
                 {props.text}
             </Text>
 
@@ -144,9 +162,14 @@ function Post(props) {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={{position: 'absolute', right: 10}} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={{position: 'absolute', right: 10}}
+                                    onPress={() => navigation.navigate('Post', {
+                                        postID: props.postID,
+                                        postUserID: props.userID
+                                    })}
+                >
                     <View style={{flexDirection: 'row'}}>
-                        <Text style={{padding: icon_size/15, color: "white", fontSize: 11}}>3</Text>
+                        <Text style={{padding: icon_size/15, color: "white", fontSize: 11}}>0</Text>
                         <Image source={require('../assets/comment_button.png')}
                                style={{width: icon_size/3, height: icon_size/3}}/>
                     </View>
@@ -162,7 +185,11 @@ function Post(props) {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Post', {
+                    postID: props.postID,
+                    postUserID: props.userID
+                })}
+                >
                     <View style={{flexDirection: 'row'}}>
                         <Image source={require('../assets/comment_button.png')}
                             style={{width: icon_size/2, height: icon_size/2}}/>
@@ -170,7 +197,7 @@ function Post(props) {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Welcome')}>
+                <TouchableHighlight style={styles.navButton} onPress={() => sharePost()}>
                     <View style={{flexDirection: 'row'}}>
                         <Image source={require('../assets/share_button.png')}
                             style={{width: icon_size/2, height: icon_size/2}}/>

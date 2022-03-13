@@ -126,7 +126,6 @@ function WelcomeScreen({ navigation }) {
 
                 </View>
 
-
                 <View style={{height: windowHeight/14}}></View>
 
             </View>

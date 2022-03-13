@@ -46,11 +46,11 @@ function ProfilePic(props) {
 
     return(
         <TouchableHighlight
-                            onPress={() => {
-                                navigation.navigate('Profile', {
-                                    userID: props.userID
-                                });
-                            }}
+            onPress={() => {
+                navigation.navigate('Profile', {
+                    userID: props.userID
+                });
+            }}
         >
             <View>
                 {isLoading ? <ActivityIndicator/> : (

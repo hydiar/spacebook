@@ -36,7 +36,8 @@ function Profile({route}, props) {
 
     const getUserData = async () => {
         const apiKey = await getKey()
-        const url = "http://localhost:3333/api/1.0.0/user/" + route.params.userID
+        const userID = route.params.userID
+        const url = "http://localhost:3333/api/1.0.0/user/" + userID
         try {
             const response = await fetch(url, {
                 method: 'GET',

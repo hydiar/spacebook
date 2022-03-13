@@ -38,7 +38,13 @@ export function ProfileElement(props) {
             </View>
 
             <View>
-                <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}>
+                <Text style={{paddingTop: icon_size/3, color: "white", fontSize: 20}}
+                      onPress={() => {
+                          navigation.navigate('Profile', {
+                              userID: props.userID
+                          });
+                      }}
+                >
                     {props.name}
                 </Text>
                 <Text style={{color: "white", fontSize: 12}}>{description}</Text>

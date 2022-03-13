@@ -14,6 +14,7 @@ import Search from "./components/search";
 import Notifications from "./components/notifications";
 import Profile from "./components/profile";
 import MyProfile from "./components/myprofile";
+import Specificpost from "./components/specificpost";
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                 <Stack.Screen name="Search" component={Search} />
                 <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="My Profile" component={MyProfile} />
+                <Stack.Screen name="Post" component={Specificpost} />
             </Stack.Navigator>
         </NavigationContainer>
     );
