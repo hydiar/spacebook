@@ -61,27 +61,32 @@ function Friends() {
             </Text>
           </View>
 
-          <View>
-            {isLoading ? <ActivityIndicator/> : (
-              <FlatList
-                data={data}
+          {isLoading ? <ActivityIndicator/> : (
+            <View>
+              {data.length === 0 ?
+                <Text style={styles.noResultText}>
+                  No friends to display
+                </Text> : (
+                <FlatList
+                  data={data}
 
-                keyExtractor={(item) => {
-                  return item.user_id;
-                }}
+                  keyExtractor={(item) => {
+                    return item.user_id;
+                  }}
 
-                renderItem={({ item }) => (
-                  <View style={{ marginLeft: 25 }}>
-                    <ProfileElement
-                      userID = {item.user_id}
-                      desc = "The Universe, Space"
-                      name = {item.user_givenname + ' ' + item.user_familyname}
-                    />
-                  </View>
-                )}
-              />
-            )}
-          </View>
+                  renderItem={({ item }) => (
+                    <View style={{ marginLeft: 25 }}>
+                      <ProfileElement
+                        userID = {item.user_id}
+                        desc = "The Universe, Space"
+                        name = {item.user_givenname + ' ' + item.user_familyname}
+                      />
+                    </View>
+                  )}
+                />
+              )}
+            </View>
+          )}
         </ScrollView>
       </View>
     </ImageBackground>

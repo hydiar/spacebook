@@ -23,7 +23,7 @@ function SpecificPost({ navigation, route }) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
-  const GetPost = async () => {
+  const getPost = async () => {
     const apiURL = await getApiUrl();
     const userID = route.params.postUserID;
     const postID = route.params.postID;
@@ -46,7 +46,7 @@ function SpecificPost({ navigation, route }) {
   };
 
   useEffect(() => {
-    GetPost();
+    getPost();
   }, []);
 
   return (

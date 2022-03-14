@@ -19,8 +19,6 @@ import styles from '../styles';
 import NavBar from './navigationbar';
 import ProfilePic from './profilepic';
 
-
-
 import Post from './post';
 
 function MyProfile({ navigation }) {

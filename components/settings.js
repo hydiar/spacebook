@@ -23,7 +23,7 @@ export function UpdateDetail(props) {
   const windowWidth = Dimensions.get('window').width;
   const [inputText, setInputText] = useState('');
 
-  async function UpdateProfile() {
+  async function updateProfile() {
     const apiURL = await getApiUrl();
     const userID = await getID();
     const apiKey = await getKey();
@@ -78,7 +78,7 @@ export function UpdateDetail(props) {
       <TouchableOpacity
         activeOpacity={0.95}
         style={[styles.button, { backgroundColor: '#E03E69', width: windowWidth * 0.32 }]}
-        onPress={() => UpdateProfile()}>
+        onPress={() => updateProfile()}>
         <Text style={styles.editButtonText}>Update {props.buttonText}</Text>
       </TouchableOpacity>
     </View>
@@ -87,14 +87,13 @@ export function UpdateDetail(props) {
 
 function Settings() {
   const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
 
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   const navigation = useNavigation();
 
-  const PickImage = async () => {
+  const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -103,11 +102,11 @@ function Settings() {
     });
 
     if (!result.cancelled) {
-      await UploadProfilePicture(result);
+      await uploadProfilePicture(result);
     }
   };
 
-  const GetUserData = async () => {
+  const getUserData = async () => {
     const apiURL = await getApiUrl();
     const userID = await getID();
     const apiKey = await getKey();
@@ -129,10 +128,10 @@ function Settings() {
   };
 
   useEffect(() => {
-    GetUserData();
+    getUserData();
   }, []);
 
-  async function UploadProfilePicture(image) {
+  async function uploadProfilePicture(image) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = await getID();
@@ -158,27 +157,35 @@ function Settings() {
     navigation.navigate('Settings');
   }
 
-  async function Logout() {
+  async function logout() {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     let logoutSuccess;
     const url = apiURL + 'logout';
-    let result = fetch(url, {
-      method: 'POST',
-      headers: {
-        'X-Authorization': apiKey,
-      },
-    })  //add check whether logout api was connected to before clearing variables and logging out
-      .catch((error) => console.log(error));
-    await result;
-    await storeKey(null);
-    await storeID(null);
 
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Welcome' }],
-    });
-    navigation.navigate('Welcome');
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Authorization': apiKey,
+          Accept: '*/*',
+        },
+      });
+      if (await response.ok) {
+        await storeKey(null);
+        await storeID(null);
+        console.log('Logout successful');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Welcome' }],
+        });
+        navigation.navigate('Welcome');
+      } else {
+        console.log('Logout unsuccessful');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -236,7 +243,7 @@ function Settings() {
             <TouchableOpacity
               activeOpacity={0.95}
               style={ styles.uploadButton }
-              onPress={() => PickImage()}>
+              onPress={() => pickImage()}>
               <Text style={styles.buttonText}>Upload New Profile Picture</Text>
             </TouchableOpacity>
           </View>
@@ -246,7 +253,7 @@ function Settings() {
           <TouchableOpacity
             activeOpacity={0.95}
             style={[styles.button, { width: windowWidth * 0.5 }]}
-            onPress={() => Logout()}>
+            onPress={() => logout()}>
             <Text style={styles.buttonText}>Logout</Text>
           </TouchableOpacity>
         </View>

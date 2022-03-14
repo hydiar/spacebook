@@ -19,7 +19,6 @@ import ProfilePic from './profilepic';
 
 function WritePost({ navigation }) {
   const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
   let iconSize = windowWidth / 7;
 
   const [userData, setUserData] = useState([]);
@@ -27,7 +26,7 @@ function WritePost({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [draftSaved, setDraftSaved] = useState(false);
 
-  const GetUserData = async () => {
+  const getUserData = async () => {
       const apiURL = await getApiUrl();
       const apiKey = await getKey();
       const userID = await getID();
@@ -49,7 +48,7 @@ function WritePost({ navigation }) {
       }
     };
 
-  async function SubmitPost() {
+  async function submitPost() {
     if (postText != '') {
       const apiURL = await getApiUrl();
       const userID = await getID();
@@ -81,7 +80,7 @@ function WritePost({ navigation }) {
     }
   }
 
-  async function SaveDraftText() {
+  async function saveDraftText() {
     if (postText && postText != '') {
       const id = await getID();
       await storePostDraft(id, postText);
@@ -89,7 +88,7 @@ function WritePost({ navigation }) {
     }
   }
 
-  async function GetDraftText() {
+  async function getDraftText() {
     const id = await getID();
     const draftText = await getPostDraft(id);
     if (draftText && draftText != '') {
@@ -98,8 +97,8 @@ function WritePost({ navigation }) {
   }
 
   useEffect(() => {
-    GetUserData();
-    GetDraftText();
+    getUserData();
+    getDraftText();
   }, []);
 
   return (
@@ -150,7 +149,7 @@ function WritePost({ navigation }) {
             <TouchableOpacity
               activeOpacity={0.95}
               style={[styles.postButton, { backgroundColor: '#E03E69', }]}
-              onPress={() => SaveDraftText()}>
+              onPress={() => saveDraftText()}>
               <Text style={styles.buttonText}>
                 Save as Draft
               </Text>
@@ -160,7 +159,7 @@ function WritePost({ navigation }) {
           <View>
             <TouchableOpacity
               activeOpacity={0.95} style={ styles.postButton }
-              onPress={() => SubmitPost()}>
+              onPress={() => submitPost()}>
               <Text style={styles.buttonText}>
                 Post
               </Text>
@@ -172,7 +171,7 @@ function WritePost({ navigation }) {
             Draft Saved
           </Text> : (
             <View/>
-          )}
+        )}
       </View>
 
     </ImageBackground>

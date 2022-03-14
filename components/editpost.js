@@ -19,7 +19,7 @@ import ProfilePic from './profilepic';
 function EditPost({ route, navigation }) {
   const [postText, setPostText] = useState('');
 
-  async function PatchPost() {
+  async function patchPost() {
     if (postText != '') {
       const apiURL = await getApiUrl();
       const userID = await getID();
@@ -110,7 +110,7 @@ function EditPost({ route, navigation }) {
           <View>
             <TouchableOpacity
               activeOpacity={0.95} style={ styles.postButton }
-              onPress={() => PatchPost()}>
+              onPress={() => patchPost()}>
               <Text style={ styles.buttonText }>
                 Update Post
               </Text>

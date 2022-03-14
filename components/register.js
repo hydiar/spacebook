@@ -15,6 +15,7 @@ import { storeKey, storeID, getApiUrl } from '../scripts/asyncstore';
 
 import styles from '../styles';
 import Home from '../components/home';
+import { wait, checkEmail, checkPassword, checkName } from '../scripts/validation';
 
 function Register({ navigation }) {
   const windowWidth = Dimensions.get('window').width;
@@ -26,62 +27,81 @@ function Register({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [isValid, setIsValid] = useState(true);
 
-  async function Register() {
-    const apiURL = await getApiUrl();
-    let key = '';
-    let id = '';
-    const url = apiURL + 'user';
+  async function register() {
+    if (password === passwordConfirm) {
+      if (checkEmail(email) &&
+          checkPassword(password) &&
+          checkPassword(passwordConfirm) &&
+          checkName(firstName) &&
+          checkName(lastName)) {
 
-    try {
-      const response = fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
+        const apiURL = await getApiUrl();
+        let key = '';
+        let id = '';
+        const url = apiURL + 'user';
 
-        body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-          password: password,
-        }),
-      });
-      if (await response) {
-        const loginURL = apiURL + 'login/';
+        try {
+          const response = fetch(url, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
 
-        const result = fetch(loginURL, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-        })
-          .then((response) => response.json())
-          .then((json) => {
-            key = json.token;
-            id = json.id;
-          })
-          .catch((error) => console.log(error));
-        await result;
-        if (key != '') {
-          //set key in global secure storage
-          await storeKey(key);
-          key = '';
-          await storeID(id);
-          id = '';
-          navigation.navigate('Home');
+            body: JSON.stringify({
+              first_name: firstName,
+              last_name: lastName,
+              email: email,
+              password: password,
+            }),
+          });
+          if (await response) {
+            const loginURL = apiURL + 'login/';
+
+            const result = fetch(loginURL, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+            })
+              .then((response) => response.json())
+              .then((json) => {
+                key = json.token;
+                id = json.id;
+              })
+              .catch((error) => console.log(error));
+            await result;
+            if (key != '') {
+              //set key in global secure storage
+              await storeKey(key);
+              key = '';
+              await storeID(id);
+              id = '';
+              navigation.navigate('Home');
+            }
+          } else {
+            console.log('User not created successfully');
+          }
+        } catch (error) {
+          console.error(error);
         }
       } else {
-        console.log('User not created successfully');
+        console.log('One or more of the inputs are invalid');
+        setIsValid(false);
+        wait(1500).then(() => setIsValid(true));
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      console.log('Passwords do not match');
+      setPasswordMatch(false);
+      wait(1500).then(() => setPasswordMatch(true));
     }
   }
 
@@ -133,7 +153,7 @@ function Register({ navigation }) {
           returnKeyType = "go"
           onKeyPress={(ev) => {
             if (ev.key === 'Enter') {
-              Register();
+              register();
             }
           }}
 
@@ -153,13 +173,33 @@ function Register({ navigation }) {
           <TouchableOpacity
             activeOpacity={0.95}
             style={styles.button}
-            onPress={() => Register()}>
+            onPress={() => register()}>
             <Text style={styles.buttonText}>
               Sign Up
             </Text>
           </TouchableOpacity>
 
         </View>
+
+        {!isValid ?
+          <View style={{ position: 'absolute', marginBottom: windowWidth / 1.8 }}>
+            <Text style={{ color: 'white', fontSize: 12 }}>
+              Invalid Input
+            </Text>
+          </View>
+          : (
+            <View/>
+          )}
+
+        {!passwordMatch ?
+          <View style={{ position: 'absolute', marginBottom: windowWidth / 1.8 }}>
+            <Text style={{ color: 'white', fontSize: 12 }}>
+              Passwords do not match
+            </Text>
+          </View>
+          : (
+            <View/>
+          )}
 
         <View style={{ height: windowHeight / 14 }}></View>
 

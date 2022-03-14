@@ -81,6 +81,7 @@ function Notifications() {
         } else {
           console.log('Friend request not accepted successfully');
         }
+
         Refresh();
       } catch (error) {
         console.error(error);
@@ -104,6 +105,7 @@ function Notifications() {
         } else {
           console.log('Friend request not rejected successfully');
         }
+
         Refresh();
       } catch (error) {
         console.error(error);
@@ -159,27 +161,32 @@ function Notifications() {
         </View>
 
         <ScrollView>
-          <View>
-            {isLoading ? <ActivityIndicator/> : (
-              <FlatList
-                data={data}
+          {isLoading ? <ActivityIndicator/> : (
+            <View>
+              {data.length === 0 ?
+                <Text style={styles.noResultText}>
+                  No friends requests to display
+                </Text> : (
+                <FlatList
+                  data={data}
 
-                keyExtractor={(item) => {
-                  return item.user_id;
-                }}
+                  keyExtractor={(item) => {
+                    return item.user_id;
+                  }}
 
-                renderItem={({ item }) => (
-                  <View style={{ marginLeft: 25 }}>
-                    <UserElement
-                      user_id = {item.user_id}
-                      fname = {item.first_name}
-                      lname = {item.last_name}
-                    />
-                  </View>
-                )}
-              />
-            )}
-          </View>
+                  renderItem={({ item }) => (
+                    <View style={{ marginLeft: 25 }}>
+                      <UserElement
+                        user_id = {item.user_id}
+                        fname = {item.first_name}
+                        lname = {item.last_name}
+                      />
+                    </View>
+                  )}
+                />
+              )}
+            </View>
+          )}
         </ScrollView>
       </View>
     </ImageBackground>

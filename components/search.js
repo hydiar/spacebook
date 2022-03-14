@@ -10,7 +10,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
-  FlatList,
+  FlatList, Text,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 
@@ -24,11 +24,12 @@ function Search() {
   let iconSize = windowWidth / 16;
 
   const [isLoading, setLoading] = useState(true);
-  const [searchTerms, setSearchTerms] = useState(true);
+  const [searchTerms, setSearchTerms] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
   const [friendData, setFriendData] = useState([]);
   const [data, setData] = useState([]);
 
-  const GetFriends = async () => {
+  const getFriends = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = await getID();
@@ -49,17 +50,12 @@ function Search() {
     }
   };
 
-  const GetUsers = async (searchTerms) => {
+  const getUsers = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = await getID();
 
-    let searchQuery = '';
-    if (searchTerms && (searchTerms != '') && (searchTerms != ' ')) {
-      searchQuery = '?q=' + searchTerms + '&limit=20&offset=0';
-      searchQuery = searchQuery.replace(' ', '%20');
-    }
-
+    let searchQuery = '?q=' + searchTerms + '&limit=20&offset=0';
     const friendUrl = apiURL + 'search' + searchQuery;
     try {
       const response = await fetch(friendUrl, {
@@ -78,6 +74,7 @@ function Search() {
       }
 
       setData(searchResults);
+      setHasSearched(true);
     } catch (error) {
       console.error(error);
     } finally {
@@ -85,73 +82,38 @@ function Search() {
     }
   };
 
+  async function addFriend(userID) {
+    const apiURL = await getApiUrl();
+    const apiKey = await getKey();
+    const url = apiURL + 'user/' + userID + '/friends';
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Authorization': apiKey,
+          Accept: '*/*',
+        },
+      });
+      if (await response.ok) {
+        console.log('Friend ' + userID + ' added successfully');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function checkFriend(userID) {
+    for (let i = 0; i < friendData.length; i++) {
+      if (friendData[i].user_id == userID) {
+        return true;
+      }
+    }
+  }
+
   useEffect(() => {
-    GetFriends();
-    GetUsers();
+    getFriends();
+    checkFriend();
   }, []);
-
-  function refreshResults() {
-    GetUsers(searchTerms);
-  }
-
-  function UserElement(props) {
-    const [isFriend, setIsFriend] = useState(false);
-
-    async function AddFriend(userID) {
-      const apiURL = await getApiUrl();
-      const apiKey = await getKey();
-      const url = apiURL + 'user/' + userID + '/friends';
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'X-Authorization': apiKey,
-            Accept: '*/*',
-          },
-        });
-        if (await response.ok) {
-          console.log('Friend ' + userID + ' added successfully');
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    async function CheckFriend() {
-      for (let i = 0; i < props.friendData.length; i++) {
-        if (props.friendData[i].user_id == props.user_id) {
-          setIsFriend(true);
-        }
-      }
-    }
-
-    useEffect(() => {
-      CheckFriend();
-    }, []);
-
-    return (
-      <View style={{ flexDirection: 'row' }}>
-        <ProfileElement
-          userID = {props.user_id}
-          desc = "The Universe, Space"
-          name = {props.fname + ' ' + props.lname}
-        />
-
-        {isFriend ?
-          <View/>
-          : (
-            <View style={ styles.addFriendButtonBox }>
-              <TouchableOpacity
-                activeOpacity={0.95} style={styles.addButton}
-                onPress={() => AddFriend(props.user_id)}>
-                <Image source={require('../assets/add_friend.png')}
-                       style={{ width: iconSize, height: iconSize }}/>
-              </TouchableOpacity>
-            </View>
-          )}
-      </View>
-    );
-  }
 
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
@@ -162,40 +124,65 @@ function Search() {
           <NavBar />
         </View>
 
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <TextInput
-            style={[styles.input, { width: windowWidth * 0.85 }]}
+            style={ styles.search }
             placeholder={'Search ...'}
-            onChangeText={(searchTerms) => {
-              setSearchTerms(searchTerms);
-              refreshResults();
-            }}
+            onChangeText={(search) => setSearchTerms(search)}
           />
+          <TouchableOpacity
+            activeOpacity={0.95}
+            style={ styles.searchButton }
+            onPress={() => getUsers()}
+          >
+            <Image source={require('../assets/search.png')}
+                   style={{ width: iconSize, height: iconSize }}
+            />
+          </TouchableOpacity>
         </View>
 
         <ScrollView>
-          <View>
-            {isLoading ? <ActivityIndicator/> : (
-              <FlatList
-                data={data}
+          {isLoading ? <ActivityIndicator/> : (
+            <View>
+              {data.length === 0 && hasSearched ?
+                <Text style={[styles.noResultText, { paddingLeft: 35 }]}>
+                  No results ...
+                </Text> : (
+                <FlatList
+                  data={data}
 
-                keyExtractor={(item) => {
-                  return item.user_id;
-                }}
+                  keyExtractor={(item) => {
+                    return item.user_id;
+                  }}
 
-                renderItem={({ item }) => (
-                  <View style={{ marginLeft: 25 }}>
-                    <UserElement
-                      user_id = {item.user_id}
-                      fname = {item.user_givenname}
-                      lname = {item.user_familyname}
-                      friendData = {friendData}
-                    />
-                  </View>
-                )}
-              />
-            )}
-          </View>
+                  renderItem={({ item }) => (
+                    <View style={{ marginLeft: 25 }}>
+
+                      <ProfileElement
+                        userID = {item.user_id}
+                        desc = "The Universe, Space"
+                        name = {item.user_givenname + ' ' + item.user_familyname}
+                      />
+
+                      {checkFriend(item.user_id) ?
+                        <View/>
+                        : (
+                          <View style={ styles.addFriendButtonBox }>
+                            <TouchableOpacity
+                              activeOpacity={0.95} style={styles.addButton}
+                              onPress={() => addFriend(item.user_id)}>
+                              <Image source={require('../assets/add_friend.png')}
+                                     style={{ width: iconSize, height: iconSize }}/>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+
+                    </View>
+                  )}
+                />
+              )}
+            </View>
+          )}
         </ScrollView>
       </View>
     </ImageBackground>

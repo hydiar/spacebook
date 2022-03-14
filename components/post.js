@@ -26,7 +26,7 @@ function Post(props) {
 
   const navigation = useNavigation();
 
-  async function LikeAction(userID, postID) {
+  async function likeAction(userID, postID) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const url = apiURL + 'user/' + userID + '/post/' + postID + '/like';
@@ -65,7 +65,7 @@ function Post(props) {
     }
   }
 
-  async function GetNumLikes(userID, postID) {
+  async function getNumLikes(userID, postID) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const url = apiURL + 'user/' + userID + '/post/' + postID;
@@ -85,7 +85,7 @@ function Post(props) {
   }
 
   useEffect(() => {
-    GetNumLikes(props.userID, props.postID);
+    getNumLikes(props.userID, props.postID);
     if (props.iseditable == 'true') {
       setIsEditable(true);
     }
@@ -102,7 +102,7 @@ function Post(props) {
     }
   };
 
-  async function DeletePost() {
+  async function deletePost() {
 
     function Refresh() {
       navigation.reset({
@@ -165,7 +165,7 @@ function Post(props) {
               <TouchableOpacity
                 activeOpacity={0.95}
                 style={[styles.editPostButton, { backgroundColor: '#D41455' }]}
-                onPress={() => DeletePost()}>
+                onPress={() => deletePost()}>
                 <Image source={require('../assets/bin.png')}
                        style={{ width: iconSize / 3, height: iconSize / 3 }}
                 />
@@ -224,7 +224,7 @@ function Post(props) {
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 6 }}>
 
         <TouchableHighlight style={styles.navButton}
-                            onPress={() => LikeAction(props.userID, props.postID)}
+                            onPress={() => likeAction(props.userID, props.postID)}
         >
           <View style={{ flexDirection: 'row' }}>
             <Image source={require('../assets/like_button.png')}

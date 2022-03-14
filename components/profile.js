@@ -31,7 +31,7 @@ function Profile({ route }) {
 
   const navigation = useNavigation();
 
-  const CheckOwnProfile = async () => {
+  const checkOwnProfile = async () => {
     const parsedID = route.params.userID;
     const myID = await getID();
     if (parsedID == myID) {
@@ -39,7 +39,7 @@ function Profile({ route }) {
     }
   };
 
-  let CheckNotFriend = async () => {
+  let checkNotFriend = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = await getID();
@@ -69,7 +69,7 @@ function Profile({ route }) {
     }
   };
 
-  const GetUserData = async () => {
+  const getUserData = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = route.params.userID;
@@ -90,7 +90,7 @@ function Profile({ route }) {
     }
   };
 
-  const GetUserPosts = async () => {
+  const getUserPosts = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const url = apiURL + 'user/' + route.params.userID + '/post';
@@ -110,7 +110,7 @@ function Profile({ route }) {
     }
   };
 
-  const GetUserFriends = async () => {
+  const getUserFriends = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = route.params.userID;
@@ -131,7 +131,7 @@ function Profile({ route }) {
     }
   };
 
-  async function AddFriend() {
+  async function addFriend() {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = route.params.userID;
@@ -153,16 +153,17 @@ function Profile({ route }) {
   }
 
   useEffect(() => {
-    const SetupPage = async () => {
-      await CheckOwnProfile();
-      await GetUserData();
-      if (await CheckNotFriend() == false) {
+    const setupPage = async () => {
+      await checkOwnProfile();
+      await getUserData();
+      if (await checkNotFriend() == false) {
         setIsPrivate(false);
-        GetUserPosts();
-        GetUserFriends();
+        getUserPosts();
+        getUserFriends();
       }
     };
-    SetupPage();
+
+    setupPage();
   }, []);
 
   return (
@@ -194,7 +195,7 @@ function Profile({ route }) {
                     <TouchableOpacity
                       activeOpacity={0.95}
                       style={styles.button}
-                      onPress={() => AddFriend()}>
+                      onPress={() => addFriend()}>
                       <Text style={styles.buttonText}>
                         Add Friend
                       </Text>

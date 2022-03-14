@@ -3,6 +3,7 @@
 import * as React from 'react';
 import {
   View,
+  Text,
   ScrollView,
   Dimensions,
   ImageBackground,
@@ -53,10 +54,9 @@ function HomeScreen({ navigation }) {
           }
         } catch (error) {
           console.error(error);
-        } finally {
-          setLoading(false);
         }
       }
+
       postArray.sort((a, b) => {
         return new Date(b.timestamp) - new Date(a.timestamp);
       });
@@ -73,6 +73,7 @@ function HomeScreen({ navigation }) {
   }, []);
 
   return (
+
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}
     >
@@ -82,29 +83,35 @@ function HomeScreen({ navigation }) {
         </View>
 
         <ScrollView>
-          <View>
-            {isLoading ? <ActivityIndicator/> : (
-              <FlatList
-                data={data}
+          {isLoading ? <ActivityIndicator/> : (
+            <View>
+              {data.length === 0 ?
+                <Text style={styles.noResultText}>
+                  No posts to display
+                </Text> : (
 
-                keyExtractor={(item) => {
-                  return item.post_id;
-                }}
+                <FlatList
+                  data={data}
 
-                renderItem={({ item }) => (
-                  <Post
-                    postID = {item.post_id}
-                    userID = {item.author.user_id}
-                    fname = {item.author.first_name}
-                    lname = {item.author.last_name}
-                    text = {item.text}
-                    time = {item.timestamp}
-                    likes = {item.numLikes}
-                  />
-                )}
-              />
-            )}
-          </View>
+                  keyExtractor={(item) => {
+                    return item.post_id;
+                  }}
+
+                  renderItem={({ item }) => (
+                    <Post
+                      postID = {item.post_id}
+                      userID = {item.author.user_id}
+                      fname = {item.author.first_name}
+                      lname = {item.author.last_name}
+                      text = {item.text}
+                      time = {item.timestamp}
+                      likes = {item.numLikes}
+                    />
+                  )}
+                />
+              )}
+            </View>
+          )}
         </ScrollView>
       </View>
 

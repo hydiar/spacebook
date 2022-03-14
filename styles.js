@@ -49,6 +49,15 @@ export default StyleSheet.create({
         margin: 11,
         borderWidth: 1,
       },
+    search: {
+        color: 'white',
+        placeholderTextColor: '#bbb',
+        borderColor: 'transparent',
+        borderBottomColor: '#aaa',
+        height: windowHeight / 22,
+        width: windowWidth * 0.72,
+        borderWidth: 1,
+    },
     edit: {
         color: 'white',
         placeholderTextColor: '#bbb',
@@ -133,16 +142,19 @@ export default StyleSheet.create({
         position: 'absolute',
         top: windowWidth / 20,
         left: windowWidth - (windowWidth / 2.8),
+        borderRadius: 4,
       },
     rejectButtonBox: {
         position: 'absolute',
         top: windowWidth / 20,
         left: windowWidth - (windowWidth / 4.3),
+        borderRadius: 4,
       },
     addFriendButtonBox: {
         position: 'absolute',
         top: windowWidth / 20,
         left: windowWidth - (windowWidth / 3.2),
+        borderRadius: 4,
       },
     editPostButton: {
         height: windowHeight / 30,
@@ -167,6 +179,16 @@ export default StyleSheet.create({
         elevation: 10,
         borderRadius: 4,
       },
+    searchButton: {
+        height: windowWidth / 12,
+        width: windowWidth / 10,
+        backgroundColor: '#791AD9',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 6,
+        padding: 3,
+        borderRadius: 4,
+    },
     logoutButton: {
         position: 'absolute',
         top: windowHeight - (windowHeight / 10),
@@ -228,5 +250,12 @@ export default StyleSheet.create({
         paddingLeft: 27,
         paddingTop: 18,
       },
+    noResultText: {
+        color: 'white',
+        fontSize: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+    },
   }
 );
