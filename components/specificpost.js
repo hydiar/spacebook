@@ -2,97 +2,92 @@
 
 import * as React from 'react';
 import {
-    View,
-    Text,
-    ScrollView,
-    Dimensions,
-    ImageBackground,
-    Image,
-    TouchableHighlight,
-    ActivityIndicator,
-    FlatList
+  Dimensions,
+  View,
+  ScrollView,
+  ImageBackground,
+  Image,
+  TouchableHighlight,
+  ActivityIndicator,
 } from 'react-native';
+import { useEffect, useState } from 'react';
 
-import { getKey, getID } from "../scripts/asyncstore"
+import { getKey, getApiUrl } from '../scripts/asyncstore';
+import styles from '../styles';
+import NavBar from './navigationbar';
+import Post from './post';
 
-import NavBar from "./navigationbar";
-import Post from "./post";
-import styles from "../styles"
-import { useEffect, useState } from "react";
+function SpecificPost({ navigation, route }) {
+  const windowWidth = Dimensions.get('window').width;
 
-function SpecificPost({ route }) {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
-
-    const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState([]);
-
-    console.log("post ID: " + route.params.postID)
-
-    const getPost = async () => {
-        const userID = route.params.postUserID
-        const postID = route.params.postID
-        let apiKey = await getKey()
-        const url = "http://localhost:3333/api/1.0.0/user/" + userID + "/post/" + postID
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Authorization': apiKey
-                }
-            });
-            const json = await response.json();
-            setData(json)
-
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
+  const GetPost = async () => {
+    const apiURL = await getApiUrl();
+    const userID = route.params.postUserID;
+    const postID = route.params.postID;
+    let apiKey = await getKey();
+    const url = apiURL + 'user/' + userID + '/post/' + postID;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-Authorization': apiKey,
+        },
+      });
+      const json = await response.json();
+      setData(json);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    useEffect(() => {
-        getPost();
-    }, []);
+  useEffect(() => {
+    GetPost();
+  }, []);
 
+  return (
+    <ImageBackground source={require('../assets/stars_darker.png')}
+                     style={styles.background}
+    >
+      <View style={styles.navbarBox}>
+        <View>
+          <NavBar />
+        </View>
 
-    return (
-        <ImageBackground source={require("../assets/stars_darker.png")} style={{width: windowWidth, height: windowHeight}}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <View>
-                    <NavBar />
-                </View>
+        <ScrollView>
+          <View>
+            {isLoading ? <ActivityIndicator/> : (
+              <Post
+                postID = {data.post_id}
+                userID = {data.author.user_id}
+                fname = {data.author.first_name}
+                lname = {data.author.last_name}
+                text = {data.text}
+                time = {data.timestamp}
+                likes = {data.numLikes}
+              />
+            )}
+          </View>
 
-                <ScrollView>
+        </ScrollView>
+      </View>
 
-                    <View>
-                        {isLoading ? <ActivityIndicator/> : (
-                            <Post
-                                postID = {data.post_id}
-                                userID = {data.author.user_id}
-                                fname = {data.author.first_name}
-                                lname = {data.author.last_name}
-                                text = {data.text}
-                                time = {data.timestamp}
-                                likes = {data.numLikes}
+      <View style={styles.writePostButton}>
+        <TouchableHighlight style={styles.navButton}
+                            onPress={() => navigation.navigate('Write Post')}
+        >
+          <Image source={require('../assets/new_post.png')}
+                 style={{ width: windowWidth / 6.5, height: windowWidth / 6.5 }}
+          />
+        </TouchableHighlight>
+      </View>
 
-                            />
-                        )}
-                    </View>
-
-                </ScrollView>
-            </View>
-
-            <View style={{position: 'absolute', top: windowHeight-(windowHeight/10), left: windowWidth-(windowWidth/4.5)}}>
-                <TouchableHighlight style={styles.navButton} onPress={() => navigation.navigate('Write Post')}>
-
-                    <Image source={require('../assets/new_post.png')}
-                           style={{width: windowWidth/6.5, height: windowWidth/6.5}}/>
-                </TouchableHighlight>
-            </View>
-        </ImageBackground>
-    );
+    </ImageBackground>
+  );
 }
 
 export default SpecificPost;

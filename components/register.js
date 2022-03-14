@@ -2,165 +2,170 @@
 
 import * as React from 'react';
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    ImageBackground,
-    TextInput,
-    Button,
-    TouchableOpacity,
-    Linking,
-    Dimensions } from "react-native";
+  Text,
+  View,
+  Image,
+  ImageBackground,
+  TextInput,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import { useState } from 'react';
+import { storeKey, storeID, getApiUrl } from '../scripts/asyncstore';
 
-import { storeKey, storeID } from "../scripts/asyncstore"
+import styles from '../styles';
+import Home from '../components/home';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+function Register({ navigation }) {
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
+  let logoSize = windowWidth / 2;
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
-import Home from "../components/home"
-import styles from "../styles"
+  async function Register() {
+    const apiURL = await getApiUrl();
+    let key = '';
+    let id = '';
+    const url = apiURL + 'user';
 
-import { useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+    try {
+      const response = fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
 
-const Stack = createNativeStackNavigator();
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password,
+        }),
+      });
+      if (await response) {
+        const loginURL = apiURL + 'login/';
 
-//TODO fix register so that it properly logs the user in once registered
-//TODO add a back button (back to welcome),
-
-function WelcomeScreen({ navigation }) {
-    let logo_size = windowWidth / 2
-
-    if (windowHeight < windowWidth) {
-        logo_size = windowWidth / 5
-    }
-
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [passwordConfirm, setPasswordConfirm] = useState("");
-
-    let key = ""
-    let id = ""
-
-    async function Register() {
-        if (password == passwordConfirm ) {
-            if (firstName != "" && lastName != "" && email != "") {
-                //const url = "http://192.168.1.53:3333/api/1.0.0/login";
-                const url = "http://127.0.0.1:3333/api/1.0.0/user"; //for testing on phone
-                let result = fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        first_name: firstName,
-                        last_name: lastName,
-                        email: email,
-                        password: password
-                    })
-                })
-                    .then((response) => response.json())
-                    .then((json) => key = json['token'])
-                    .then((json) => id = json['id'])
-
-                    .catch((error) => console.log(error));
-
-                await result
-                if (key != "") {
-                    //set key in global secure storage
-                    await storeKey(key)
-                    await storeID(id)
-                    navigation.navigate('Home')
-                }
-            }
-            else {
-                console.log("All fields are mandatory")
-            }
+        const result = fetch(loginURL, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        })
+          .then((response) => response.json())
+          .then((json) => {
+            key = json.token;
+            id = json.id;
+          })
+          .catch((error) => console.log(error));
+        await result;
+        if (key != '') {
+          //set key in global secure storage
+          await storeKey(key);
+          key = '';
+          await storeID(id);
+          id = '';
+          navigation.navigate('Home');
         }
-        else {
-            console.log("Passwords do not match")
-
-        }
+      } else {
+        console.log('User not created successfully');
+      }
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-    return (
+  return (
 
-        <ImageBackground source={require("../assets/stars.png")} style={{width: windowWidth, height: windowHeight}}>
-            <View style={styles.container}>
+    <ImageBackground source={require('../assets/stars.png')}
+                       style={styles.background}
+    >
+      <View style={styles.container}>
 
-                <Image source={require("../assets/icon.png")}
-                       style={{width: logo_size, height: logo_size}}
-                />
+        <Image source={require('../assets/icon.png')}
+               style={{ width: logoSize, height: logoSize }}
+        />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder={"First Name"}
-                    onChangeText={(firstName) => setFirstName(firstName)}
-                    returnKeyType = "done"
-                />
+        <TextInput
+          style={styles.input}
+          placeholder={'First Name'}
+          onChangeText={(firstName) => setFirstName(firstName)}
+          returnKeyType = "done"
+        />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder={"Last Name"}
-                    onChangeText={(lastName) => setLastName(lastName)}
-                    returnKeyType = "done"
-                />
+        <TextInput
+          style={styles.input}
+          placeholder={'Last Name'}
+          onChangeText={(lastName) => setLastName(lastName)}
+          returnKeyType = "done"
+        />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder={"Email address"}
-                    onChangeText={(email) => setEmail(email)}
-                    returnKeyType = "done"
-                />
+        <TextInput
+          style={styles.input}
+          placeholder={'Email address'}
+          onChangeText={(email) => setEmail(email)}
+          returnKeyType = "done"
+        />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder={"Password"}
-                    secureTextEntry={true}
-                    onChangeText={(passwordConfirm) => setPasswordConfirm(passwordConfirm)}
-                    returnKeyType = "done"
-                />
+        <TextInput
+          style={styles.input}
+          placeholder={'Password'}
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+          returnKeyType = "done"
+        />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder={"Confirm Password"}
-                    secureTextEntry={true}
-                    onChangeText={
-                    (password) => setPassword(password)
-                }
-                    returnKeyType = "go"
-                    onKeyPress={(ev) => {
-                        if (ev.key === "Enter") {
-                            navigation.navigate('Home');
-                        }
-                    }}
-                />
+        <TextInput
+          style={styles.input}
+          placeholder={'Confirm Password'}
+          secureTextEntry={true}
+          onChangeText={(passwordConfirm) => setPasswordConfirm(passwordConfirm)}
+          returnKeyType = "go"
+          onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              Register();
+            }
+          }}
 
-                <View style={{flexDirection: 'row'}}>
-                    <View>
-                        <TouchableOpacity
-                            activeOpacity={0.95}
-                            style={[styles.button, {backgroundColor: '#E03E69', width: windowWidth*0.75}]}
-                            //onPress={() => navigation.navigate('Home')}>
-                            onPress={() => Register()}>
+        />
 
-                            <Text style={styles.buttonText}>Sign Up</Text>
-                        </TouchableOpacity>
-                    </View>
+        <View style={{ flexDirection: 'row' }}>
 
-                </View>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            style={[styles.button, { backgroundColor: '#E03E69' }]}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.buttonText}>
+              Go Back
+            </Text>
+          </TouchableOpacity>
 
-                <View style={{height: windowHeight/14}}></View>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            style={styles.button}
+            onPress={() => Register()}>
+            <Text style={styles.buttonText}>
+              Sign Up
+            </Text>
+          </TouchableOpacity>
 
-            </View>
-        </ImageBackground>
-    );
+        </View>
+
+        <View style={{ height: windowHeight / 14 }}></View>
+
+      </View>
+    </ImageBackground>
+  );
 }
-export default WelcomeScreen;
+
+export default Register;
