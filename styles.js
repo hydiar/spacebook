@@ -24,6 +24,11 @@ export default StyleSheet.create({
         borderBottomWidth: 1,
         width: windowWidth,
       },
+    loading: {
+        height: windowHeight/1.3,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     navbarBox: {
         flex: 1,
         alignItems: 'center',
@@ -99,9 +104,7 @@ export default StyleSheet.create({
         justifyContent: 'center',
         marginTop: 12,
         marginHorizontal: (windowWidth * 1 / 3) / 20,
-        elevation: 10,
         borderRadius: 4,
-        margin: 3,
       },
     writePostButton: {
         position: 'absolute',

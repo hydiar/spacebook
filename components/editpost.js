@@ -19,6 +19,8 @@ import ProfilePic from './profilepic';
 function EditPost({ route, navigation }) {
   const [postText, setPostText] = useState('');
 
+  //Takes the edited text from TextInput and packages it in a JSON PATCH request to
+  // the specific post endpoint
   async function patchPost() {
     if (postText != '') {
       const apiURL = await getApiUrl();
@@ -38,6 +40,7 @@ function EditPost({ route, navigation }) {
             text: postText,
           }),
         });
+        //If the API receives an OK response, navigate back to the 'My Profile' screen
         if (await response.ok) {
           console.log('Post ' + postID + ' updated successfully');
           navigation.reset({
@@ -61,6 +64,7 @@ function EditPost({ route, navigation }) {
     }
   }, []);
 
+  //Displays the 'Edit Post' screen, a text input with options to post to Spacebook
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}

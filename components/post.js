@@ -26,6 +26,8 @@ function Post(props) {
 
   const navigation = useNavigation();
 
+  //Takes the ID of the post and the user and creates a JSON POST
+  // request to the {post_id}/like endpoint
   async function likeAction(userID, postID) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -38,10 +40,19 @@ function Post(props) {
           Accept: '*/*',
         },
       });
+
+      //If an OK is received from the API, the like was successful
+      // and the like count is locally updated
       if (await response.ok) {
         console.log('Post ' + postID + ' successfully liked');
         setLikeNum(likeNum + 1);
-      } else {
+      }
+
+      //If an OK is not received, the API is either unavailable
+      // or has already been liked.
+      //A DELETE request is now attempted to the {post_id}/like
+      // endpoint to 'un-like' the post.
+      else {
         try {
           const response = await fetch(url, {
             method: 'DELETE',
@@ -50,11 +61,15 @@ function Post(props) {
               Accept: '*/*',
             },
           });
+
+          //If an OK is received, the like removal was successful and the like count
+          // is locally updated
+          //If an OK is not received, the like count remains unchanged.
           if (await response.ok) {
             console.log('Post ' + postID + ' like successfully removed');
             setLikeNum(likeNum - 1);
           } else {
-            console.log('Removing post ' + postID + ' like unsuccessful');
+            console.log('Like action ' + postID + ' unsuccessful');
           }
         } catch (error) {
           console.error(error);
@@ -65,6 +80,8 @@ function Post(props) {
     }
   }
 
+  //Gets the number of likes for a specific post from the post/{post_id} endpoint and
+  // populates the returned integer in the likeNum object
   async function getNumLikes(userID, postID) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -84,6 +101,8 @@ function Post(props) {
     }
   }
 
+  //If the user is viewing their own post (e.g. from their 'My Profile' page),
+  // set the isEditable boolean to true
   useEffect(() => {
     getNumLikes(props.userID, props.postID);
     if (props.iseditable == 'true') {
@@ -91,6 +110,8 @@ function Post(props) {
     }
   }, []);
 
+  //When called, a system share dialogue will be opened to share the text
+  // contents of the post
   const sharePost = async () => {
     try {
       await Share.share({
@@ -102,6 +123,7 @@ function Post(props) {
     }
   };
 
+  //Sends a DELETE request to the /post/{user_id} endpoint to delete the current post
   async function deletePost() {
 
     function Refresh() {
@@ -123,18 +145,25 @@ function Post(props) {
           Accept: '*/*',
         },
       });
+
+      //If an OK is received from the API, the post is deleted and the page refreshed
       if (await response.ok) {
         console.log('Post ' + props.postID + ' successfully deleted');
         Refresh();
       } else {
         console.log('Post ' + props.postID + ' not deleted successfully');
       }
-
     } catch (error) {
       console.error(error);
     }
   }
 
+  /* Displays the 'Post' component, which is used to display a Spacebook post.
+  The 'Post' component renders the user's profile picture, their name, the time posted,
+   the contents and the like count of the post.
+  There are also three options (Like, Comment and Share), but Comment has not been implemented.
+  If the user taps on the post text or the Comment button, it takes them to 'Specific Post' screen
+  The 'Post' component is currently used by the 'Home', 'Profile' and 'My Profile' screens. */
   return (
     <View style={{ marginLeft: 15, marginRight: 10 }}>
       <View style={{ flexDirection: 'row' }}>

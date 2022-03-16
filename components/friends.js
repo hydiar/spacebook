@@ -20,6 +20,8 @@ function Friends() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+  //Gets an array of the user's friends in JSON format from the /friends endpoint
+  // and populates the data array
   const getFriends = async () => {
     const apiURL = await getApiUrl();
     const userID = await getID();
@@ -45,11 +47,12 @@ function Friends() {
     getFriends();
   }, []);
 
+  //Displays the 'Friends' screen, a FlatList of the currently logged-in user's friends
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={ styles.background }
     >
-      <View style={{ flex: 1, justifyContent: 'center' }}>
+      <View style={styles.navbarBox}>
         <View>
           <NavBar />
         </View>
@@ -61,8 +64,11 @@ function Friends() {
             </Text>
           </View>
 
-          {isLoading ? <ActivityIndicator/> : (
-            <View>
+          {isLoading ?
+            <View style={styles.loading}>
+              <ActivityIndicator/>
+            </View> : (
+              <View>
               {data.length === 0 ?
                 <Text style={styles.noResultText}>
                   No friends to display

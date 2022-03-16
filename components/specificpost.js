@@ -23,6 +23,8 @@ function SpecificPost({ navigation, route }) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+  //Gets a specific post in JSON format from the /post/{post_id} endpoint
+  // and populates the data object
   const getPost = async () => {
     const apiURL = await getApiUrl();
     const userID = route.params.postUserID;
@@ -49,6 +51,7 @@ function SpecificPost({ navigation, route }) {
     getPost();
   }, []);
 
+  //Displays a specific post in isolation.
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}

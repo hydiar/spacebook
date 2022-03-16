@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 import { getApiUrl, getKey } from '../scripts/asyncstore';
 import { Avatar } from 'react-native-elements';
@@ -21,7 +22,10 @@ function ProfilePic(props) {
   const [profilePic, setProfilePic] = useState([]);
 
   const navigation = useNavigation();
+  const route = useRoute();
 
+  //Gets the user's profile picture as a blob, creates a local URL
+  // reference and populates the profilePic object with it
   const getProfilePic = async () => {
     const apiURL = await getApiUrl();
     const url = apiURL + 'user/' + props.userID + '/photo';
@@ -46,6 +50,8 @@ function ProfilePic(props) {
     getProfilePic();
   }, []);
 
+
+  //Set the value of the profile picture size multiplier (if specified)
   let multi;
   if (props.multiplier) {
     multi = props.multiplier;
@@ -53,15 +59,19 @@ function ProfilePic(props) {
     multi = 1;
   }
 
+  //Displays the profile picture of the user in an Avatar component
   return (
     <TouchableHighlight
       onPress={() => {
-        navigation.push('Profile', {
-          userID: props.userID,
-        });
+        if (route.name === 'My Profile') {
+          navigation.navigate(route.name);
+        } else {
+          navigation.push('Profile', {
+            userID: props.userID,
+          });
+        }
       }}
-      >
-
+    >
       <View>
         {isLoading ? <ActivityIndicator/> : (
           <Avatar

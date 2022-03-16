@@ -30,10 +30,14 @@ function WelcomeScreen({ navigation }) {
   let key = '';
   let id = '';
 
+  //After checking each of the inputs for validity, send a POST request containing the
+  // entered credentials as a JSON body to the /login endpoint.
+  //The token and user ID from the response are stored in asynchronously to be accessed later.
+  //Once stored, the 'Home' screen is then navigated to.
   async function login() {
     if (checkEmail(email) && checkPassword(password)) {
       const apiURL = await getApiUrl();
-      const url = apiURL + 'login'; //for testing on phone
+      const url = apiURL + 'login';
       const result = fetch(url, {
         method: 'POST',
         headers: {
@@ -66,6 +70,8 @@ function WelcomeScreen({ navigation }) {
     }
   }
 
+  //Displays the 'Welcome' screen, where the user can login to Spacebook
+  // or navigate to the 'Register' screen
   return (
     <ImageBackground source={require('../assets/stars.png')}
                      style={styles.background}

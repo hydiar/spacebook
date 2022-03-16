@@ -13,6 +13,7 @@ import {
   FlatList
 } from 'react-native';
 import { useEffect, useState } from 'react';
+import PullToRefresh from 'react-simple-pull-to-refresh';
 
 import { getKey, getID, getApiUrl } from '../scripts/asyncstore';
 import styles from '../styles';
@@ -77,42 +78,47 @@ function HomeScreen({ navigation }) {
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}
     >
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={styles.navbarBox}>
         <View>
           <NavBar />
         </View>
 
-        <ScrollView>
-          {isLoading ? <ActivityIndicator/> : (
-            <View>
-              {data.length === 0 ?
-                <Text style={styles.noResultText}>
-                  No posts to display
-                </Text> : (
+        <PullToRefresh onRefresh={getAllPosts}>
+          <ScrollView>
+            {isLoading ?
+              <View style={styles.loading}>
+                <ActivityIndicator/>
+              </View> : (
+              <View>
+                {data.length === 0 ?
+                  <Text style={styles.noResultText}>
+                    No posts to display
+                  </Text> : (
 
-                <FlatList
-                  data={data}
+                  <FlatList
+                    data={data}
 
-                  keyExtractor={(item) => {
-                    return item.post_id;
-                  }}
+                    keyExtractor={(item) => {
+                      return item.post_id;
+                    }}
 
-                  renderItem={({ item }) => (
-                    <Post
-                      postID = {item.post_id}
-                      userID = {item.author.user_id}
-                      fname = {item.author.first_name}
-                      lname = {item.author.last_name}
-                      text = {item.text}
-                      time = {item.timestamp}
-                      likes = {item.numLikes}
-                    />
-                  )}
-                />
-              )}
-            </View>
-          )}
-        </ScrollView>
+                    renderItem={({ item }) => (
+                      <Post
+                        postID = {item.post_id}
+                        userID = {item.author.user_id}
+                        fname = {item.author.first_name}
+                        lname = {item.author.last_name}
+                        text = {item.text}
+                        time = {item.timestamp}
+                        likes = {item.numLikes}
+                      />
+                    )}
+                  />
+                )}
+              </View>
+            )}
+          </ScrollView>
+        </PullToRefresh>
       </View>
 
       <View style={styles.writePostButton}>

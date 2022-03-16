@@ -31,6 +31,8 @@ function Profile({ route }) {
 
   const navigation = useNavigation();
 
+  //Checks whether the user has navigated to their own profile.
+  // If so, navigate to the 'My Profile' screen before doing anything else
   const checkOwnProfile = async () => {
     const parsedID = route.params.userID;
     const myID = await getID();
@@ -39,7 +41,10 @@ function Profile({ route }) {
     }
   };
 
-  let checkNotFriend = async () => {
+  //Gets an array of the user's friends in JSON format from the /friends
+  // endpoint and checks if the userID of the profile being viewed is
+  // contained in the list. If so, set the isFriend boolean to true
+  const checkNotFriend = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
     const userID = await getID();
@@ -69,6 +74,8 @@ function Profile({ route }) {
     }
   };
 
+  //Gets a single JSON element of the user's personal information
+  // from the /user endpoint and populates it in the userData object
   const getUserData = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -90,6 +97,8 @@ function Profile({ route }) {
     }
   };
 
+  //Gets an array of the user's posts in JSON format from the /post
+  // endpoint and populates the data array
   const getUserPosts = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -110,6 +119,8 @@ function Profile({ route }) {
     }
   };
 
+  //Gets an array of the user's friends in JSON format from the /friends
+  // endpoint and populates the friendData array
   const getUserFriends = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -131,6 +142,8 @@ function Profile({ route }) {
     }
   };
 
+  //Sends a POST request to the {user_id}/friends endpoint to send a friend request
+  // to the user whose profile is being viewed
   async function addFriend() {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -152,6 +165,10 @@ function Profile({ route }) {
     }
   }
 
+  //Setup the page by first checking if the profile is the user's own or if it
+  // cannot be viewed (private)
+  //If the profile is the logged-in user's friend, the posts are retrieved and
+  // the profile displayed
   useEffect(() => {
     const setupPage = async () => {
       await checkOwnProfile();
@@ -166,6 +183,7 @@ function Profile({ route }) {
     setupPage();
   }, []);
 
+  //Displays the 'Profile' screen, displaying the viewed user's posts and friends
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}

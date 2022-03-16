@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import PullToRefresh from 'react-simple-pull-to-refresh';
 
 import { getKey, getApiUrl } from '../scripts/asyncstore';
 import styles from '../styles';
@@ -29,6 +30,8 @@ function Notifications() {
 
   const navigation = useNavigation();
 
+  //Gets an array of the user's friend requests in JSON format from the
+  // /friendrequests endpoint and populates the data array
   const getFriendRequests = async () => {
     const apiURL = await getApiUrl();
     let apiKey = await getKey();
@@ -54,6 +57,7 @@ function Notifications() {
     getFriendRequests();
   }, []);
 
+  //A 'Refresh' function that clears the stack and navigates back to the same screen
   function Refresh() {
     navigation.reset({
       index: 0,
@@ -64,6 +68,8 @@ function Notifications() {
 
   function UserElement(props) {
 
+    //Sends a POST request to the /friendrequests/{user_id} endpoint to accept the
+    // specific friend request
     async function Accept(userID) {
       const apiURL = await getApiUrl();
       const apiKey = await getKey();
@@ -76,18 +82,20 @@ function Notifications() {
             Accept: '*/*',
           },
         });
+        //If an OK is received from the API, the friend request is accepted
+        // and the page refreshed
         if (await response.ok) {
           console.log('Friend request from ' + userID + ' accepted');
+          Refresh();
         } else {
           console.log('Friend request not accepted successfully');
         }
-
-        Refresh();
       } catch (error) {
         console.error(error);
       }
     }
 
+    //Sends a DELETE request to the /friendrequests/{user_id} endpoint to reject the current friend request
     async function Reject(userID) {
       const apiURL = await getApiUrl();
       const apiKey = await getKey();
@@ -100,19 +108,21 @@ function Notifications() {
             Accept: '*/*',
           },
         });
+        //If an OK is received from the API, the friend request is rejected and the page refreshed
         if (await response.ok) {
           console.log('Friend request from ' + userID + ' rejected');
+          Refresh();
         } else {
           console.log('Friend request not rejected successfully');
         }
-
-        Refresh();
       } catch (error) {
         console.error(error);
       }
 
     }
 
+    // For each request rendered below, the user's profile picture and name is displayed.
+    // An option is diplayed to accept/reject the request.
     return (
       <View style={{ flexDirection: 'row' }}>
         <ProfileElement
@@ -145,6 +155,7 @@ function Notifications() {
     );
   }
 
+  //Displays the 'Notifications' screen, a FlatList of the currently logged-in user's pending friend requests
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}
@@ -160,34 +171,39 @@ function Notifications() {
           </Text>
         </View>
 
-        <ScrollView>
-          {isLoading ? <ActivityIndicator/> : (
-            <View>
-              {data.length === 0 ?
-                <Text style={styles.noResultText}>
-                  No friends requests to display
-                </Text> : (
-                <FlatList
-                  data={data}
+        <PullToRefresh onRefresh={getFriendRequests}>
+          <ScrollView>
+            {isLoading ?
+              <View style={styles.loading}>
+                <ActivityIndicator/>
+              </View> : (
+                <View>
+                {data.length === 0 ?
+                  <Text style={styles.noResultText}>
+                    No friends requests to display
+                  </Text> : (
+                  <FlatList
+                    data={data}
 
-                  keyExtractor={(item) => {
-                    return item.user_id;
-                  }}
+                    keyExtractor={(item) => {
+                      return item.user_id;
+                    }}
 
-                  renderItem={({ item }) => (
-                    <View style={{ marginLeft: 25 }}>
-                      <UserElement
-                        user_id = {item.user_id}
-                        fname = {item.first_name}
-                        lname = {item.last_name}
-                      />
-                    </View>
-                  )}
-                />
-              )}
-            </View>
-          )}
-        </ScrollView>
+                    renderItem={({ item }) => (
+                      <View style={{ marginLeft: 25 }}>
+                        <UserElement
+                          user_id = {item.user_id}
+                          fname = {item.first_name}
+                          lname = {item.last_name}
+                        />
+                      </View>
+                    )}
+                  />
+                )}
+              </View>
+            )}
+          </ScrollView>
+        </PullToRefresh>
       </View>
     </ImageBackground>
   );

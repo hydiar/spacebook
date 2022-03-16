@@ -2,6 +2,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//Get API key from asyncstorage
 export const getKey = async () => {
   try {
     const value = await AsyncStorage.getItem('@api_Key');
@@ -13,6 +14,7 @@ export const getKey = async () => {
   }
 };
 
+//Get user ID from asyncstorage
 export const getID = async () => {
   try {
     const value = await AsyncStorage.getItem('@ID');
@@ -24,6 +26,7 @@ export const getID = async () => {
   }
 };
 
+//Get API URL from asyncstorage
 export const getApiUrl = async () => {
   try {
     const value = await AsyncStorage.getItem('@api_url');
@@ -35,6 +38,7 @@ export const getApiUrl = async () => {
   }
 };
 
+//Get post draft text from asyncstorage
 export const getPostDraft = async (id) => {
   try {
     const value = await AsyncStorage.getItem('@draft' + id);
@@ -46,6 +50,7 @@ export const getPostDraft = async (id) => {
   }
 };
 
+//Store API key in asyncstorage
 export const storeKey = async (value) => {
   try {
     await AsyncStorage.setItem('@api_Key', value);
@@ -54,6 +59,7 @@ export const storeKey = async (value) => {
   }
 };
 
+//Store user ID in asyncstorage
 export const storeID = async (value) => {
   try {
     await AsyncStorage.setItem('@ID', value);
@@ -62,6 +68,7 @@ export const storeID = async (value) => {
   }
 };
 
+//Store API URL in asyncstorage
 export const storeApiUrl = async (value) => {
   try {
     await AsyncStorage.setItem('@api_url', value);
@@ -70,6 +77,7 @@ export const storeApiUrl = async (value) => {
   }
 };
 
+//Store post draft text in asyncstorage
 export const storePostDraft = async (id, value) => {
   try {
     await AsyncStorage.setItem('@draft' + id, value);

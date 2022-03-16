@@ -23,6 +23,9 @@ export function UpdateDetail(props) {
   const windowWidth = Dimensions.get('window').width;
   const [inputText, setInputText] = useState('');
 
+  //Dynamic function that can update a variety of user details.
+  //Depending on the props that are parsed to the UpdateDetail component, a json body
+  // is created, which is then sent in a PATCH request to the user/{user_id} endpoint
   async function updateProfile() {
     const apiURL = await getApiUrl();
     const userID = await getID();
@@ -66,11 +69,16 @@ export function UpdateDetail(props) {
     }
   }
 
+  useEffect(() => {
+    setInputText(props.textField);
+  }, []);
+
+  //Displays a text input and a button to update one of many personal details
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 7 }}>
       <TextInput
         style={styles.edit}
-        placeholder={props.textField}
+        placeholder={inputText}
         secureTextEntry={props.isPassword}
         onChangeText={(inputText) => setInputText(inputText)}
       />
@@ -87,12 +95,15 @@ export function UpdateDetail(props) {
 
 function Settings() {
   const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
 
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   const navigation = useNavigation();
 
+  //Define the pickImage function, which uses the ImagePicker tool, allowing users to
+  // select local image files or take a picture with their device's camera
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -106,6 +117,8 @@ function Settings() {
     }
   };
 
+  //Gets a single JSON element of the user's current personal information
+  // from the /user endpoint and populates it in the data object
   const getUserData = async () => {
     const apiURL = await getApiUrl();
     const userID = await getID();
@@ -131,6 +144,9 @@ function Settings() {
     getUserData();
   }, []);
 
+  //Sends a post request with the parsed image data to the {user_id}/photo endpoint.
+  //Sending an image file to this endpoint updates the user's Spacebook profile picture
+  //Once sent, the page is refreshed.
   async function uploadProfilePicture(image) {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -157,10 +173,12 @@ function Settings() {
     navigation.navigate('Settings');
   }
 
+  //Sends an authenticated  post request to the /logout endpoint.
+  //Once a response is received, the locally stored API key and userID is cleared
+  // and the user is navigated back to the login screen.
   async function logout() {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
-    let logoutSuccess;
     const url = apiURL + 'logout';
 
     try {
@@ -188,6 +206,8 @@ function Settings() {
     }
   }
 
+  //Displays numerous text input fields to change the user's personal data, and a
+  // button that allows the user to upload a new profile picture.
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}
@@ -208,36 +228,37 @@ function Settings() {
             </Text>
           </View>
 
-          <View style={{ marginLeft: 27 }}>
-            {isLoading ? <ActivityIndicator/> : (
+          {isLoading ?
+            <View style={[styles.loading, { height: windowHeight / 3 }]}>
+              <ActivityIndicator/>
+            </View> : (
+
+            <View style={{ marginLeft: 27 }}>
               <UpdateDetail
                 textField = {data.first_name}
                 buttonText = "first name"
                 postData = "first_name"
               />
-            )}
-            {isLoading ? <ActivityIndicator/> : (
+
               <UpdateDetail
                 textField = {data.last_name}
                 buttonText = "last name"
                 postData = "last_name"
               />
-            )}
-            {isLoading ? <ActivityIndicator/> : (
+
               <UpdateDetail
                 textField = {data.email}
                 buttonText = "email"
                 postData = "email"
               />
-            )}
-            {isLoading ? <ActivityIndicator/> : (
+
               <UpdateDetail
                 buttonText = "password"
                 postData = "password"
                 isPassword = {true}
               />
+            </View>
             )}
-          </View>
 
           <View style={{ alignItems: 'center' }}>
             <TouchableOpacity

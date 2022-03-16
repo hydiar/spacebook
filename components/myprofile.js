@@ -30,6 +30,8 @@ function MyProfile({ navigation }) {
   const [userData, setUserData] = useState([]);
   const [data, setData] = useState([]);
 
+  //Gets a single JSON element of the user's personal information
+  // from the /user endpoint and populates it in the userData object
   const getUserData = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -51,6 +53,8 @@ function MyProfile({ navigation }) {
     }
   };
 
+  //Gets an array of the user's posts in JSON format from the /post
+  // endpoint and populates the data array
   const getUserPosts = async () => {
     const apiURL = await getApiUrl();
     const apiKey = await getKey();
@@ -77,6 +81,7 @@ function MyProfile({ navigation }) {
     getUserPosts();
   }, []);
 
+  //Displays the 'My Profile' screen, an editable Profile displaying the user's own posts
   return (
     <ImageBackground source={require('../assets/stars_darker.png')}
                      style={styles.background}
@@ -88,65 +93,67 @@ function MyProfile({ navigation }) {
 
         <ScrollView>
 
-          {isLoadingUser ? <ActivityIndicator/> : (
-            <View style={{ alignItems: 'center', padding: 12 }}>
-              <ProfilePic
-                userID = {userData.user_id}
-                multiplier = {5}
-              />
-            </View>
-          )}
+        {isLoadingUser && isLoading ?
+          <View style={styles.loading}>
+            <ActivityIndicator/>
+          </View> : (
+            <View>
 
-          {isLoadingUser ? <ActivityIndicator/> : (
-            <View style={{ alignItems: 'center' }}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.nameText}>
-                  {userData.first_name + ' ' + userData.last_name}
+              <View style={{ alignItems: 'center', padding: 12 }}>
+                <ProfilePic
+                  userID = {userData.user_id}
+                  multiplier = {5}
+                />
+              </View>
+
+              <View style={{ alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.nameText}>
+                    {userData.first_name + ' ' + userData.last_name}
+                  </Text>
+
+                  <TouchableOpacity
+                    activeOpacity={0.95}
+                    style={styles.editProfileButton}
+                    onPress={() => navigation.navigate('Settings')}
+                  >
+                    <Image source={require('../assets/edit.png')}
+                           style={{ width: iconSize, height: iconSize }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+
+              <View>
+
+                <Text style={styles.textHeading}>
+                  My Posts
                 </Text>
 
-                <TouchableOpacity
-                  activeOpacity={0.95}
-                  style={styles.editProfileButton}
-                  onPress={() => navigation.navigate('Settings')}
-                >
-                  <Image source={require('../assets/edit.png')}
-                         style={{ width: iconSize, height: iconSize }}
-                  />
-                </TouchableOpacity>
+                <FlatList
+                  data={data}
+
+                  keyExtractor={(item) => {
+                    return item.post_id;
+                  }}
+
+                  renderItem={({ item }) => (
+                    <Post
+                      postID = {item.post_id}
+                      userID = {item.author.user_id}
+                      fname = {item.author.first_name}
+                      lname = {item.author.last_name}
+                      text = {item.text}
+                      time = {item.timestamp}
+                      likes = {item.numLikes}
+                      iseditable = {'true'}
+                    />
+                  )}
+                />
               </View>
             </View>
           )}
-
-          {isLoading ? <ActivityIndicator/> : (
-            <View>
-
-              <Text style={styles.textHeading}>
-                My Posts
-              </Text>
-
-              <FlatList
-                data={data}
-
-                keyExtractor={(item) => {
-                  return item.post_id;
-                }}
-
-                renderItem={({ item }) => (
-                  <Post
-                    postID = {item.post_id}
-                    userID = {item.author.user_id}
-                    fname = {item.author.first_name}
-                    lname = {item.author.last_name}
-                    text = {item.text}
-                    time = {item.timestamp}
-                    likes = {item.numLikes}
-                    iseditable = {'true'}
-                  />
-                )}
-              />
-            </View>
-          )}
-
         </ScrollView>
       </View>
 

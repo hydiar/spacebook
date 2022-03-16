@@ -30,6 +30,10 @@ function Register({ navigation }) {
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [isValid, setIsValid] = useState(true);
 
+  //After checking each of the inputs for validity and that the passwords match,
+  // send a POST request to the /user endpoint to register a new user.
+  //If a successful response is received, send another request to the /login endpoint
+  // containing the newly registered credentials. Once logged in, navigate to 'Home'.
   async function register() {
     if (password === passwordConfirm) {
       if (checkEmail(email) &&
@@ -105,8 +109,10 @@ function Register({ navigation }) {
     }
   }
 
+  //Displays the 'Register' screen, where the user can input their name, an email and a
+  // password to register to Spacebook. There is a button to submit these details and
+  // register, or another one to go back to the 'Welcome' screen
   return (
-
     <ImageBackground source={require('../assets/stars.png')}
                        style={styles.background}
     >

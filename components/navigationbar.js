@@ -24,6 +24,8 @@ function NavBar() {
   const [isLoading, setLoading] = useState(true);
   const [profilePic, setProfilePic] = useState(true);
 
+  //Gets the user's profile picture as a blob, creates a local URL
+  // reference and populates the profilePic object with it
   const getUserProfilePic = async () => {
       try {
         const apiURL = await getApiUrl();
@@ -49,6 +51,8 @@ function NavBar() {
     getUserProfilePic();
   }, []);
 
+  //Displays the 'Navigation Bar' component, which is used to navigate the app.
+  // It is displayed at the top of most screens.
   return (
     <View>
       <View style={[styles.navBox, { borderBottomWidth: 0, paddingTop: 10 }]}>
