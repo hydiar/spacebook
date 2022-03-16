@@ -25,10 +25,10 @@ export default StyleSheet.create({
         width: windowWidth,
       },
     loading: {
-        height: windowHeight/1.3,
+        height: windowHeight / 1.3,
         alignItems: 'center',
         justifyContent: 'center',
-    },
+      },
     navbarBox: {
         flex: 1,
         alignItems: 'center',
@@ -62,7 +62,7 @@ export default StyleSheet.create({
         height: windowHeight / 22,
         width: windowWidth * 0.72,
         borderWidth: 1,
-    },
+      },
     edit: {
         color: 'white',
         placeholderTextColor: '#bbb',
@@ -191,7 +191,7 @@ export default StyleSheet.create({
         margin: 6,
         padding: 3,
         borderRadius: 4,
-    },
+      },
     logoutButton: {
         position: 'absolute',
         top: windowHeight - (windowHeight / 10),
@@ -259,6 +259,6 @@ export default StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-    },
+      },
   }
 );

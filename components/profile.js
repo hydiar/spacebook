@@ -63,7 +63,6 @@ function Profile({ route }) {
           isFriend = true;
         }
       }
-
       if (isFriend == true) {
         return false;
       }

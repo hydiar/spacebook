@@ -9,8 +9,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   TextInput,
-  Picker,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
@@ -88,6 +87,10 @@ function WritePost({ navigation }) {
         console.error(error);
       }
     }
+  }
+  function ManualPost() {
+    submitPost()
+    navigation.navigate('Home')
   }
 
   //When this saveDraftText function is called:
@@ -213,7 +216,7 @@ function WritePost({ navigation }) {
           <View>
             <TouchableOpacity
               activeOpacity={0.95} style={ styles.postButton }
-              onPress={() => submitPost()}>
+              onPress={() => ManualPost()}>
               <Text style={styles.buttonText}>
                 Post
               </Text>

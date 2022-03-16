@@ -176,7 +176,7 @@ function Post(props) {
 
         <View style={{ paddingTop: iconSize / 6 }}>
           {isEditable ?
-            <View style={{ flexDirection: 'row', paddingLeft: iconSize * 1.4 }}>
+            <View style={{ flexDirection: 'row', paddingLeft: iconSize/10 }}>
 
               <TouchableOpacity
                 activeOpacity={0.95}

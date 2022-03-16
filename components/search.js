@@ -141,6 +141,13 @@ function Search() {
             style={ styles.search }
             placeholder={'Search ...'}
             onChangeText={(search) => setSearchTerms(search)}
+            returnKeyType = "go"
+            onKeyPress={(ev) => {
+              if (ev.key === 'Enter') {
+                getUsers();
+              }
+            }}
+
           />
           <TouchableOpacity
             activeOpacity={0.95}
